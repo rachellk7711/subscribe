@@ -277,7 +277,21 @@ function App() {
                 <tbody className="divide-y divide-hairline">
                   {filteredSubs.map((sub) => {
                     const isManualUnpaid = sub.payment_type === 'manual' && !sub.is_paid;
-                    const days = Math.max(0, sub.billing_date - todayDate.getDate());
+                    
+                    // 정확한 남은 일수 계산 (정렬 로직과 통일)
+                    const getDaysUntil = (sub: Subscription) => {
+                      const currentDay = todayDate.getDate();
+                      if (sub.billing_cycle === 'monthly') {
+                        let diff = sub.billing_date - currentDay;
+                        return diff >= 0 ? diff : diff + 31;
+                      } else {
+                        const targetDate = new Date(todayDate.getFullYear(), (sub.billing_month || 1) - 1, sub.billing_date);
+                        if (targetDate < todayDate) targetDate.setFullYear(todayDate.getFullYear() + 1);
+                        return Math.ceil((targetDate.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24));
+                      }
+                    };
+                    const days = getDaysUntil(sub);
+                    
                     return (
                       <tr key={sub.id} className={cn("group transition-colors", isManualUnpaid ? "bg-red-50/50" : "hover:bg-canvas/50")}>
                         <td className="px-8 py-7 text-center">
