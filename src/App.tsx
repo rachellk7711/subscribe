@@ -1,4 +1,4 @@
-// UI Refinement: Consistent Zebra Stripes and Enlarged Sidebar Typography
+// UI Refinement: Implementing Airbnb Design Language based on DESIGN.md
 import { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, 
@@ -52,7 +52,7 @@ ChartJS.register(
 );
 
 const CATEGORIES = [
-  '디지털 구독', '생활/주거', '교육/가족', '보험/금융', '세금/연간', '운동/취미'
+  '디지털 구독', '생활/주거', '교육/가곡', '보험/금융', '세금/연간', '운동/취미'
 ];
 
 function App() {
@@ -176,8 +176,8 @@ function App() {
     datasets: [{
       label: '월간 지출액',
       data: monthlyExpenditureData,
-      backgroundColor: monthlyExpenditureData.map((_, i) => i + 1 === currentMonthNum ? '#ff385c' : '#e5e5e5'),
-      borderRadius: 6,
+      backgroundColor: monthlyExpenditureData.map((_, i) => i + 1 === currentMonthNum ? '#ff385c' : '#ebebeb'),
+      borderRadius: 4,
       hoverBackgroundColor: '#ff385c',
     }]
   };
@@ -206,33 +206,34 @@ function App() {
     labels: CATEGORIES,
     datasets: [{
       data: CATEGORIES.map(cat => subscriptions.filter(s => s.category === cat).reduce((sum, s) => sum + (s.currency === 'USD' ? s.amount * exchangeRate : s.amount), 0)),
-      backgroundColor: ['#ff385c', '#222222', '#717171', '#ffb6c1', '#c1c1c1', '#dddddd'],
+      backgroundColor: ['#ff385c', '#222222', '#717171', '#ffb6c1', '#ebebeb', '#f7f7f7'],
       borderWidth: 0
     }]
   }), [subscriptions, exchangeRate]);
 
   return (
-    <div className="flex h-screen bg-canvas text-[#222222] font-sans overflow-hidden">
-      {/* PC 사이드바: 메뉴 폰트 대폭 확대 및 여백 조정 */}
-      <aside className="hidden lg:flex flex-col w-80 bg-white border-r border-hairline shrink-0 h-full z-50 shadow-sm">
+    <div className="flex h-screen bg-white text-[#222222] font-sans overflow-hidden">
+      {/* PC 사이드바: 에어비앤비 스타일 (순백색, 부드러운 라운딩, 중간 굵기 폰트) */}
+      <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-[#ebebeb] shrink-0 h-full z-50">
         <div className="p-10 shrink-0">
-          <h1 className="text-2xl font-black text-primary tracking-tighter flex items-center gap-2 mb-1">
-            <LayoutDashboard size={28} /> 고정비 관리
+          <h1 className="text-xl font-bold text-primary tracking-tight flex items-center gap-2 mb-1">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white"><LayoutDashboard size={20} /></div>
+            구독 관리
           </h1>
-          <p className="text-[10px] text-[#717171] font-bold uppercase tracking-[0.2em] opacity-60">Household Manager</p>
+          <p className="text-[10px] text-[#717171] font-medium uppercase tracking-[0.2em] mt-1">Management Pro</p>
         </div>
-        <nav className="flex-1 px-5 space-y-1.5 overflow-y-auto">
+        <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
           {['전체', ...CATEGORIES].map(cat => (
-            <button key={cat} onClick={() => setActiveTab(cat)} className={cn("w-full flex items-center justify-between px-6 py-3.5 rounded-2xl text-lg font-black transition-all text-left", activeTab === cat ? "bg-primary text-white shadow-lg shadow-primary/20 translate-x-1" : "text-[#484848] hover:bg-canvas")}>
-              <span className="flex items-center gap-4">{cat === '전체' ? <Filter size={20} /> : <div className={cn("w-2 h-2 rounded-full", activeTab === cat ? "bg-white" : "bg-primary")} />}{cat}</span>
-              {activeTab === cat && <ChevronRight size={20} />}
+            <button key={cat} onClick={() => setActiveTab(cat)} className={cn("w-full flex items-center justify-between px-5 py-3 rounded-xl text-base font-semibold transition-all text-left", activeTab === cat ? "bg-[#f7f7f7] text-[#222222]" : "text-[#484848] hover:bg-[#f7f7f7]/50")}>
+              <span className="flex items-center gap-3">{cat === '전체' ? <Filter size={18} /> : <div className={cn("w-1.5 h-1.5 rounded-full", activeTab === cat ? "bg-primary" : "bg-[#dddddd]")} />}{cat}</span>
+              {activeTab === cat && <ChevronRight size={18} className="text-primary" />}
             </button>
           ))}
         </nav>
-        <div className="p-8 border-t border-hairline bg-white shrink-0">
-          <div className="flex items-center gap-4 p-5 bg-canvas rounded-2xl border border-hairline">
-            <div className="w-12 h-12 rounded-xl bg-primary text-white flex items-center justify-center text-lg font-black shadow-md">A</div>
-            <div><p className="text-sm font-black">MASTER</p><p className="text-[10px] text-[#717171] font-bold">Household Pro</p></div>
+        <div className="p-8 border-t border-[#ebebeb] shrink-0">
+          <div className="flex items-center gap-3 p-4 bg-[#f7f7f7] rounded-2xl">
+            <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">A</div>
+            <div><p className="text-sm font-bold">MASTER</p><p className="text-[10px] text-[#717171] font-medium">Household Admin</p></div>
           </div>
         </div>
       </aside>
@@ -240,16 +241,16 @@ function App() {
       {/* 모바일 사이드바 */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-[100] lg:hidden">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
-          <div className="absolute inset-y-0 left-0 w-80 bg-white flex flex-col shadow-airbnb animate-in slide-in-from-left duration-300">
-            <div className="p-8 flex justify-between items-center border-b border-hairline shrink-0">
-              <h1 className="text-2xl font-black text-primary">카테고리</h1>
-              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2"><X size={28} /></button>
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
+          <div className="absolute inset-y-0 left-0 w-72 bg-white flex flex-col shadow-2xl animate-in slide-in-from-left duration-300">
+            <div className="p-8 flex justify-between items-center border-b border-[#ebebeb] shrink-0">
+              <h1 className="text-xl font-bold text-[#222222]">메뉴</h1>
+              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2"><X size={24} /></button>
             </div>
-            <div className="flex-1 px-5 py-6 space-y-2 overflow-y-auto">
+            <div className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
               {['전체', ...CATEGORIES].map(cat => (
-                <button key={cat} onClick={() => { setActiveTab(cat); setIsMobileMenuOpen(false); }} className={cn("w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-lg font-black", activeTab === cat ? "bg-primary text-white shadow-md" : "text-[#484848] hover:bg-canvas")}>
-                  {cat === '전체' ? <Filter size={20} /> : <div className={cn("w-2 h-2 rounded-full", activeTab === cat ? "bg-white" : "bg-primary")} />}{cat}
+                <button key={cat} onClick={() => { setActiveTab(cat); setIsMobileMenuOpen(false); }} className={cn("w-full flex items-center gap-3 px-5 py-4 rounded-xl text-base font-semibold", activeTab === cat ? "bg-[#f7f7f7]" : "text-[#484848] hover:bg-[#f7f7f7]")}>
+                  {cat === '전체' ? <Filter size={18} /> : <div className="w-1.5 h-1.5 rounded-full bg-primary" />}{cat}
                 </button>
               ))}
             </div>
@@ -257,93 +258,73 @@ function App() {
         </div>
       )}
 
-      <main className="flex-1 flex flex-col min-w-0 bg-canvas overflow-hidden">
-        <header className="h-20 bg-white/80 backdrop-blur-md border-b border-hairline flex items-center justify-between px-6 lg:px-10 shrink-0 z-40 sticky top-0">
+      <main className="flex-1 flex flex-col min-w-0 bg-white overflow-hidden">
+        <header className="h-20 bg-white border-b border-[#ebebeb] flex items-center justify-between px-6 lg:px-10 shrink-0 z-40">
           <div className="flex items-center gap-4 flex-1">
-            <button className="lg:hidden p-2.5 bg-white border border-hairline rounded-xl shadow-sm" onClick={() => setIsMobileMenuOpen(true)}><Menu size={24} /></button>
+            <button className="lg:hidden p-2.5 bg-[#f7f7f7] rounded-xl" onClick={() => setIsMobileMenuOpen(true)}><Menu size={20} /></button>
             <div className="relative flex-1 max-w-lg">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#717171]" size={18} />
-              <input type="text" placeholder="항목 검색..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-12 pr-6 py-3 bg-canvas border border-hairline rounded-full text-sm focus:bg-white focus:border-primary outline-none transition-all shadow-inner font-medium" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#717171]" size={16} />
+              <input type="text" placeholder="서비스 검색..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-12 pr-6 py-3 bg-[#f7f7f7] rounded-full text-sm focus:bg-white border border-transparent focus:border-[#dddddd] outline-none transition-all font-medium" />
             </div>
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-8 pb-32">
-          {/* 대시보드 상단 */}
-          <div className="flex items-center gap-5">
-            <div className="p-4 bg-primary text-white rounded-2xl shadow-lg shadow-primary/20 hidden sm:block">
-              <BarChart3 size={28} />
-            </div>
+        <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-12 pb-32">
+          {/* 에어비앤비 스타일: 섹션 헤더 (절제된 굵기, 넉넉한 여백) */}
+          <div className="flex items-center gap-4">
             <div>
-              <h2 className="text-2xl lg:text-3xl font-black tracking-tight text-[#222222]">통합 고정비 대시보드</h2>
-              <div className="flex items-center gap-3 text-[#717171] font-bold mt-1.5 text-xs">
-                <Clock size={14} className="text-primary" />
+              <h2 className="text-2xl font-bold tracking-tight text-[#222222]">구독 대시보드</h2>
+              <div className="flex items-center gap-2 text-[#717171] font-medium mt-1 text-xs">
                 <span>{todayStr}</span>
-                <span className="mx-1 opacity-30">|</span>
-                <p>총 {filteredSubs.length}건 관리 중</p>
+                <span className="opacity-30">•</span>
+                <p>{filteredSubs.length}개 항목</p>
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-12 bg-white border border-hairline rounded-airbnb p-6 lg:p-8 shadow-sm relative overflow-hidden group flex flex-col lg:flex-row justify-between items-center">
-              <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full -mr-24 -mt-24 blur-3xl pointer-events-none" />
-              <div className="z-10 flex flex-col items-center lg:items-start mb-6 lg:mb-0">
-                <p className="text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">Total Monthly Expenditure</p>
-                <div className="flex items-baseline gap-3">
-                  <span className="text-4xl lg:text-5xl font-black tabular-nums tracking-tighter text-[#222222]">₩{Math.round(currentMonthTotal).toLocaleString()}</span>
-                  <span className="text-lg lg:text-xl text-[#717171] font-bold">/ MO</span>
+            {/* 총 지출액 카드: 에어비앤비 스타일 (순백색, 미세 그림자, rounded-2xl) */}
+            <div className="lg:col-span-12 bg-white border border-[#ebebeb] rounded-2xl p-8 shadow-[0_6px_16px_rgba(0,0,0,0.12)] flex flex-col lg:flex-row justify-between items-center">
+              <div className="flex flex-col items-center lg:items-start mb-6 lg:mb-0">
+                <p className="text-[11px] font-bold text-[#717171] uppercase tracking-wider mb-2">Total Monthly Spend</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl lg:text-5xl font-bold tabular-nums tracking-tight text-[#222222]">₩{Math.round(currentMonthTotal).toLocaleString()}</span>
+                  <span className="text-lg text-[#717171] font-medium">/ mo</span>
                 </div>
               </div>
-              <div className="z-10 flex flex-col gap-2 w-full lg:w-[280px]">
-                <div className="flex items-center gap-3 px-4 py-2 bg-canvas border border-hairline rounded-xl">
-                  {diff > 0 ? <TrendingUp className="text-primary" size={16} /> : (diff < 0 ? <TrendingDown className="text-green-600" size={16} /> : <Minus className="text-[#717171]" size={16} />)}
-                  <span className={cn("text-xs font-black", diff > 0 ? "text-primary" : (diff < 0 ? "text-green-600" : "text-[#717171]"))}>
-                    전월 대비 {Math.abs(diffPercent)}% {diff > 0 ? '증가' : (diff < 0 ? '감소' : '동일')}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 px-4 py-2 bg-primary/5 border border-primary/10 rounded-xl">
-                  <div className="flex-1 h-1.5 bg-hairline rounded-full overflow-hidden">
-                    <div className="h-full bg-primary" style={{ width: `${Math.round((subscriptions.filter(s => s.is_paid).length / (subscriptions.length || 1)) * 100)}%` }} />
+              <div className="flex flex-col gap-3 w-full lg:w-[280px]">
+                <div className="flex items-center justify-between px-5 py-3 bg-[#f7f7f7] rounded-xl">
+                  <span className="text-xs font-bold text-[#484848]">전월 대비</span>
+                  <div className="flex items-center gap-2 font-bold text-sm">
+                    {diff > 0 ? <TrendingUp className="text-primary" size={14} /> : <TrendingDown className="text-green-600" size={14} />}
+                    <span className={diff > 0 ? "text-primary" : "text-green-600"}>{Math.abs(diffPercent)}%</span>
                   </div>
-                  <span className="text-[10px] font-black text-primary uppercase tracking-tight">납부 {Math.round((subscriptions.filter(s => s.is_paid).length / (subscriptions.length || 1)) * 100)}%</span>
                 </div>
-                <div className="flex items-center justify-between px-4 py-2 bg-canvas border border-hairline rounded-xl">
-                  <span className="text-[9px] font-black text-[#717171] uppercase tracking-wider">USD Exchange</span>
-                  <span className="text-xs font-black text-[#222222]">₩{Math.round(exchangeRate).toLocaleString()}</span>
+                <div className="flex items-center justify-between px-5 py-3 bg-[#f7f7f7] rounded-xl">
+                  <span className="text-xs font-bold text-[#484848]">납부 완료</span>
+                  <span className="text-sm font-bold text-primary">{Math.round((subscriptions.filter(s => s.is_paid).length / (subscriptions.length || 1)) * 100)}%</span>
                 </div>
               </div>
             </div>
 
-            <div className="lg:col-span-8 bg-white border border-hairline rounded-airbnb p-10 shadow-sm min-h-[420px] flex flex-col">
-              <div className="flex justify-between items-center mb-10">
-                <h3 className="font-black text-xl text-[#222222] tracking-tight">12개월 지출 추이</h3>
-                <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-2 text-[11px] font-black text-[#717171]">
-                    <div className="w-3.5 h-3.5 bg-primary rounded-[4px]" /> <span>현재 달</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-[11px] font-black text-[#717171]">
-                    <div className="w-3.5 h-3.5 bg-[#e5e5e5] rounded-[4px]" /> <span>예측 월</span>
-                  </div>
-                </div>
-              </div>
+            {/* 차트 영역: 디자인 가이드 기반 정돈 */}
+            <div className="lg:col-span-8 bg-white border border-[#ebebeb] rounded-2xl p-8 shadow-sm h-[400px] flex flex-col">
+              <h3 className="font-bold text-lg text-[#222222] mb-8">지출 추이</h3>
               <div className="flex-1 w-full">
-                <Bar key={`chart-${monthlyExpenditureData.join('-')}`} data={barChartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { backgroundColor: '#222222', padding: 14, cornerRadius: 12, callbacks: { label: (context) => `지출액: ₩${Math.round(context.raw as number).toLocaleString()}` } } }, scales: { y: { beginAtZero: true, grid: { display: false }, ticks: { display: false } }, x: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 12 }, color: '#717171', padding: 10 } } } }} />
+                <Bar key={`chart-${monthlyExpenditureData.join('-')}`} data={barChartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 12 }, color: '#717171' } } } }} />
               </div>
             </div>
 
-            <div className="lg:col-span-4 bg-white border border-hairline rounded-airbnb p-10 shadow-sm min-h-[420px] flex flex-col">
-              <div className="flex justify-between items-center mb-10">
-                <h3 className="font-black text-xl text-[#222222] tracking-tight">지출 성격별 분석</h3>
-              </div>
+            <div className="lg:col-span-4 bg-white border border-[#ebebeb] rounded-2xl p-8 shadow-sm h-[400px] flex flex-col">
+              <h3 className="font-bold text-lg text-[#222222] mb-8">카테고리 분석</h3>
               <div className="flex-1 flex flex-col items-center">
-                <div className="w-48 h-48 relative mb-10 mt-2">
-                  <Pie data={pieChartData} options={{ cutout: '80%', plugins: { legend: { display: false } } }} />
+                <div className="w-40 h-40 relative mb-8">
+                  <Pie data={pieChartData} options={{ cutout: '85%', plugins: { legend: { display: false } } }} />
                 </div>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-4 w-full px-2">
+                <div className="grid grid-cols-2 gap-4 w-full text-[11px] font-bold text-[#717171]">
                   {CATEGORIES.map((cat, i) => (
-                    <div key={cat} className="flex items-center gap-3 text-[11px] font-black text-[#717171] hover:text-[#222222] transition-all group">
-                      <div className="w-3.5 h-3.5 rounded-[4px] shrink-0 group-hover:scale-110 transition-transform" style={{ backgroundColor: pieChartData.datasets[0].backgroundColor[i] }} />
+                    <div key={cat} className="flex items-center gap-2 truncate">
+                      <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: pieChartData.datasets[0].backgroundColor[i] }} />
                       <span className="truncate">{cat}</span>
                     </div>
                   ))}
@@ -352,36 +333,35 @@ function App() {
             </div>
           </div>
 
+          {/* 지출 상세 내역: 에어비앤비 가이드 기반 격줄 음영 & 폰트 최적화 */}
           <div className="space-y-6 pt-4">
-            <div className="flex justify-between items-end border-b border-hairline pb-4 px-2">
+            <div className="flex justify-between items-end border-b border-[#ebebeb] pb-6 px-1">
               <div>
-                <h3 className="font-black text-2xl lg:text-3xl text-[#222222] tracking-tight">지출 상세 내역</h3>
-                <p className="text-[11px] font-bold text-[#717171] mt-1.5 flex items-center gap-2">
-                  <div className="w-1 h-1 bg-primary rounded-full animate-pulse" /> 결제일 임박순 자동 정렬 시스템
-                </p>
+                <h3 className="font-bold text-2xl lg:text-3xl text-[#222222] tracking-tight">지출 상세 내역</h3>
+                <p className="text-xs font-medium text-[#717171] mt-1.5">임박일 순 자동 정렬 중</p>
               </div>
-              <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setHasEndDate(false); setIsModalOpen(true); }} className="bg-primary text-white px-6 py-3 rounded-2xl font-black text-sm shadow-lg hover:bg-primary-dark transition-all active:scale-95 flex items-center gap-2 shadow-primary/25">
+              <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setHasEndDate(false); setIsModalOpen(true); }} className="bg-primary text-white px-6 py-3.5 rounded-lg font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center gap-2">
                 <Plus size={18} /> 지출 항목 추가
               </button>
             </div>
             
-            <div className="bg-white border border-hairline rounded-airbnb shadow-sm overflow-hidden mb-20">
+            <div className="bg-white border border-[#ebebeb] rounded-2xl shadow-sm overflow-hidden mb-20">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse min-w-[1000px]">
-                  {/* 헤더: 진한 핑크 음영 고정 */}
-                  <thead className="bg-primary/10 text-[#717171] font-black text-[11px] uppercase tracking-[0.15em] border-b border-hairline">
+                  {/* 헤더: 에어비앤비 스타일 (stronger pink header) */}
+                  <thead className="bg-[#fff1f3] text-[#222222] font-bold text-xs border-b border-[#ebebeb]">
                     <tr>
                       <th className="px-8 py-5 w-24 text-center">납부</th>
-                      <th className="px-8 py-5">지출 항목</th>
+                      <th className="px-8 py-5">서비스</th>
                       <th className="px-8 py-5">금액</th>
-                      <th className="px-8 py-5">결제예정일</th>
-                      <th className="px-8 py-5">구독 기간</th>
+                      <th className="px-8 py-5">결제일</th>
+                      <th className="px-8 py-5">기간</th>
                       <th className="px-8 py-5">메모</th>
                       <th className="px-8 py-5 text-right">관리</th>
                     </tr>
                   </thead>
-                  {/* 본문: 규칙적인 격줄 음영(Zebra) 적용 */}
-                  <tbody className="divide-y divide-hairline">
+                  {/* 본문: 은은한 격줄 음영 (#f7f7f7) */}
+                  <tbody className="divide-y divide-[#ebebeb]">
                     {filteredSubs.map((sub) => {
                       const isManualUnpaid = sub.payment_type === 'manual' && !sub.is_paid;
                       const getDaysUntil = (sub: Subscription) => {
@@ -398,52 +378,40 @@ function App() {
                       const days = getDaysUntil(sub);
                       
                       return (
-                        <tr key={sub.id} className="group transition-colors odd:bg-primary/[0.02] hover:bg-primary/[0.05]">
-                          <td className="px-8 py-4 text-center">
-                            <button onClick={() => togglePaidStatus(sub)} className={cn("transition-all active:scale-90", sub.is_paid ? "text-green-600" : "text-hairline hover:text-[#717171]")}>
-                              {sub.is_paid ? <CheckCircle2 size={30} /> : <Circle size={30} />}
+                        <tr key={sub.id} className="group transition-colors odd:bg-[#f7f7f7]/50 hover:bg-[#f7f7f7]">
+                          <td className="px-8 py-5 text-center">
+                            <button onClick={() => togglePaidStatus(sub)} className={cn("transition-all active:scale-90", sub.is_paid ? "text-green-600" : "text-[#dddddd] hover:text-[#717171]")}>
+                              {sub.is_paid ? <CheckCircle2 size={26} /> : <Circle size={26} />}
                             </button>
                           </td>
-                          <td className="px-8 py-4">
+                          <td className="px-8 py-5">
                             <div className="flex flex-col">
-                              <span className="font-black text-xl text-[#222222] flex items-center gap-2 tracking-tight">
+                              <span className="font-bold text-lg text-[#222222] flex items-center gap-2">
                                 {sub.service_name}
-                                {sub.is_variable && <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-md font-black shadow-sm">변동</span>}
-                                {isManualUnpaid && <AlertCircle size={16} className="text-red-500 animate-pulse" title="직접 납부 필요" />}
+                                {sub.is_variable && <span className="text-[9px] bg-[#f7f7f7] border border-[#dddddd] text-[#717171] px-1.5 py-0.5 rounded font-bold uppercase tracking-tighter">변동</span>}
+                                {isManualUnpaid && <span title="직접 납부 필요"><AlertCircle size={14} className="text-primary animate-pulse" /></span>}
                               </span>
-                              <span className="text-[12px] text-[#717171] font-bold mt-1">{sub.category}</span>
+                              <span className="text-[11px] text-[#717171] font-medium mt-0.5">{sub.category}</span>
                             </div>
                           </td>
-                          <td className="px-8 py-4 font-black text-xl text-[#222222] tabular-nums tracking-tight">₩{Math.round(sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount).toLocaleString()}</td>
-                          <td className="px-8 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className={cn("text-[10px] font-black px-2.5 py-1 rounded-full shadow-sm border shrink-0", days <= 3 ? "bg-primary text-white border-primary" : "bg-canvas text-[#717171] border-hairline")}>D-{days === 0 ? 'Day' : days}</div>
-                              <span className="text-[17px] font-black text-[#222222] whitespace-nowrap">{sub.billing_cycle === 'yearly' ? `${sub.billing_month}월 ${sub.billing_date}일` : `매월 ${sub.billing_date}일`}</span>
+                          <td className="px-8 py-5 font-bold text-lg text-[#222222] tabular-nums">₩{Math.round(sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount).toLocaleString()}</td>
+                          <td className="px-8 py-5">
+                            <div className="flex items-center gap-2">
+                              <div className={cn("text-[10px] font-bold px-2 py-0.5 rounded shadow-sm shrink-0", days <= 3 ? "bg-primary text-white" : "bg-[#f7f7f7] text-[#484848] border border-[#dddddd]")}>D-{days === 0 ? 'Day' : days}</div>
+                              <span className="text-base font-bold text-[#222222]">{sub.billing_cycle === 'yearly' ? `${sub.billing_month}/${sub.billing_date}` : `매월 ${sub.billing_date}일`}</span>
                             </div>
                           </td>
-                          <td className="px-8 py-4">
-                            <div className="flex flex-col gap-1">
-                              <span className="text-[11px] font-black text-[#484848]">{sub.started_at ? `${sub.started_at.slice(2)} ~` : '시작일 미입력'}</span>
-                              <span className="text-[11px] font-bold text-[#717171]">{sub.ended_at ? `${sub.ended_at.slice(2)} 종료` : '계속 구독 중'}</span>
-                            </div>
+                          <td className="px-8 py-5 text-xs font-medium text-[#717171]">
+                            {sub.started_at?.slice(2)} ~ {sub.ended_at?.slice(2) || '계속'}
                           </td>
-                          <td className="px-8 py-4">
-                            <span className="text-[13px] text-[#484848] font-bold line-clamp-2 max-w-[240px] leading-relaxed italic opacity-80">{sub.memo || '-'}</span>
+                          <td className="px-8 py-5">
+                            <span className="text-xs text-[#717171] font-medium line-clamp-1 max-w-[200px] italic">{sub.memo || '-'}</span>
                           </td>
-                          <td className="px-8 py-4 text-right">
-                            <div className="flex justify-end gap-3 scale-95 origin-right">
-                              <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setHasEndDate(!!sub.ended_at); setIsModalOpen(true); }} className="p-2 bg-white border border-hairline rounded-xl hover:shadow-lg transition-all text-[#484848] shadow-sm"><Edit2 size={18} /></button>
-                              <button onClick={async () => { if(window.confirm('정말 삭제할까요?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2 bg-white border border-hairline rounded-xl hover:bg-red-50 text-red-600 transition-all shadow-sm"><Trash2 size={18} /></button>
-                              <div className="relative">
-                                <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2 bg-white border border-hairline rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"><CalendarIcon size={18} /></button>
-                                {calendarMenuId === sub.id && (
-                                  <div className="absolute right-0 mt-3 w-60 bg-white border border-hairline rounded-2xl shadow-airbnb z-[100] overflow-hidden text-left animate-in fade-in zoom-in-95">
-                                    <a href={getNaverCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-7 py-4 text-[13px] font-black text-green-600 hover:bg-green-50 border-b border-hairline transition-colors">네이버 캘린더 등록</a>
-                                    <a href={getGoogleCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-7 py-4 text-[13px] font-black text-blue-600 hover:bg-blue-50 border-b border-hairline transition-colors">구글 캘린더 등록</a>
-                                    <button onClick={() => { downloadICS(sub); setCalendarMenuId(null); }} className="w-full text-left px-7 py-4 text-[13px] font-black text-[#222222] hover:bg-canvas transition-colors">ICS 파일 내보내기</button>
-                                  </div>
-                                )}
-                              </div>
+                          <td className="px-8 py-5 text-right">
+                            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setHasEndDate(!!sub.ended_at); setIsModalOpen(true); }} className="p-2 hover:bg-white rounded-full transition-all text-[#717171] hover:text-[#222222] hover:shadow-sm border border-transparent hover:border-[#ebebeb]"><Edit2 size={16} /></button>
+                              <button onClick={async () => { if(window.confirm('삭제하시겠습니까?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2 hover:bg-white rounded-full transition-all text-[#717171] hover:text-primary hover:shadow-sm border border-transparent hover:border-[#ebebeb]"><Trash2 size={16} /></button>
+                              <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2 hover:bg-white rounded-full transition-all text-[#717171] hover:text-primary hover:shadow-sm border border-transparent hover:border-[#ebebeb]"><CalendarIcon size={16} /></button>
                             </div>
                           </td>
                         </tr>
@@ -456,99 +424,34 @@ function App() {
           </div>
         </div>
 
-        {/* 모달 창 */}
+        {/* 모달 창: 에어비앤비 스타일 (순백색, rounded-2xl, soft shadow) */}
         {isModalOpen && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-md p-0 sm:p-6 animate-in fade-in duration-300">
-            <div className="bg-white rounded-t-airbnb-sm sm:rounded-airbnb shadow-airbnb w-full max-w-lg flex flex-col h-[90vh] sm:h-auto mt-auto sm:mt-0 overflow-hidden animate-in slide-in-from-bottom sm:zoom-in-95">
-              <div className="px-8 py-6 border-b border-hairline flex justify-between items-center shrink-0">
-                <h3 className="text-xl font-black tracking-tight text-[#222222]">{editingSub ? '정보 수정' : '새 지출 등록'}</h3>
-                <button onClick={() => { setIsModalOpen(false); setEditingSub(null); }} className="p-2 bg-canvas rounded-xl hover:bg-hairline transition-all"><X size={20} /></button>
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-6">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col h-[85vh] sm:h-auto overflow-hidden">
+              <div className="px-8 py-6 border-b border-[#ebebeb] flex justify-between items-center shrink-0">
+                <h3 className="text-lg font-bold text-[#222222]">{editingSub ? '정보 수정' : '항목 추가'}</h3>
+                <button onClick={() => { setIsModalOpen(false); setEditingSub(null); }} className="p-2 hover:bg-[#f7f7f7] rounded-full transition-all"><X size={20} /></button>
               </div>
-              <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 space-y-6 pb-32 sm:pb-10 bg-white">
-                <div className="grid grid-cols-2 gap-5">
+              <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 space-y-6 bg-white">
+                <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">지출 명칭</label>
-                    <input required name="service_name" defaultValue={editingSub?.service_name} type="text" placeholder="예: 아파트 관리비" className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 text-base font-black outline-none focus:bg-white focus:border-primary transition-all shadow-inner" />
+                    <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">지출 명칭</label>
+                    <input required name="service_name" defaultValue={editingSub?.service_name} type="text" className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 text-base font-medium outline-none focus:border-[#222222] transition-all" />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">금액</label>
-                    <input required name="amount" defaultValue={editingSub?.amount} type="number" step="0.01" className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 text-base font-black outline-none focus:bg-white focus:border-primary shadow-inner" />
+                    <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">금액</label>
+                    <input required name="amount" defaultValue={editingSub?.amount} type="number" className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 text-base font-bold outline-none focus:border-[#222222]" />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">통화</label>
-                    <select name="currency" defaultValue={editingSub?.currency || 'KRW'} className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 font-black text-sm outline-none bg-white shadow-inner"><option value="KRW">KRW (₩)</option><option value="USD">USD ($)</option></select>
-                  </div>
-
-                  <div className="col-span-2 grid grid-cols-2 gap-5">
-                    <div>
-                      <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">구독 시작일</label>
-                      <input name="started_at" defaultValue={editingSub?.started_at || todayDate.toISOString().split('T')[0]} type="date" className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 font-bold text-sm shadow-inner" />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">구독 종료일</label>
-                      <div className="flex flex-col gap-2">
-                        <input disabled={!hasEndDate} name="ended_at" defaultValue={editingSub?.ended_at || ''} type="date" className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 font-bold text-sm shadow-inner disabled:opacity-30" />
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input type="checkbox" checked={!hasEndDate} onChange={(e) => setHasEndDate(!e.target.checked)} className="w-4 h-4 rounded text-primary" />
-                          <span className="text-[11px] font-bold text-[#717171]">종료일 없음</span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="col-span-2 border-t border-hairline pt-4">
-                    <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-3">납부 주기 및 유형</label>
-                    <div className="grid grid-cols-2 gap-3 mb-3">
-                      <button type="button" onClick={() => setModalBillingCycle('monthly')} className={cn("py-2.5 rounded-xl border-2 font-black text-sm transition-all", modalBillingCycle === 'monthly' ? "border-primary bg-primary/5 text-primary" : "border-hairline text-[#717171]")}>매월</button>
-                      <button type="button" onClick={() => setModalBillingCycle('yearly')} className={cn("py-2.5 rounded-xl border-2 font-black text-sm transition-all", modalBillingCycle === 'yearly' ? "border-primary bg-primary/5 text-primary" : "border-hairline text-[#717171]")}>매년</button>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <label className={cn("flex flex-col p-4 rounded-2xl border-2 transition-all cursor-pointer", (editingSub?.payment_type === 'auto' || !editingSub) ? "border-primary bg-primary/5 shadow-sm" : "border-hairline hover:border-gray-300")}>
-                        <div className="flex items-center gap-2 font-black text-xs"><input type="radio" name="payment_type" value="auto" defaultChecked={editingSub?.payment_type === 'auto' || !editingSub} className="text-primary" /> 자동 납부</div>
-                      </label>
-                      <label className={cn("flex flex-col p-4 rounded-2xl border-2 transition-all cursor-pointer", editingSub?.payment_type === 'manual' ? "border-red-500 bg-red-50 shadow-sm" : "border-hairline hover:border-gray-300")}>
-                        <div className="flex items-center gap-2 font-black text-xs"><input type="radio" name="payment_type" value="manual" defaultChecked={editingSub?.payment_type === 'manual'} className="text-red-500" /> 직접 납부</div>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="col-span-2 grid grid-cols-2 gap-4">
-                    {modalBillingCycle === 'yearly' && (
-                      <div className="animate-in fade-in slide-in-from-top-1">
-                        <label className="block text-[10px] font-black text-[#717171] mb-2">결제 월</label>
-                        <select name="billing_month" defaultValue={editingSub?.billing_month || 1} className="w-full bg-canvas border border-hairline rounded-xl px-4 py-2.5 font-black bg-white shadow-inner">{Array.from({length: 12}, (_, i) => i + 1).map(m => <option key={m} value={m}>{m}월</option>)}</select>
-                      </div>
-                    )}
-                    <div className={modalBillingCycle === 'monthly' ? 'col-span-2' : ''}>
-                      <label className="block text-[10px] font-black text-[#717171] mb-2">결제 일</label>
-                      <select name="billing_date" defaultValue={editingSub?.billing_date || 1} className="w-full bg-canvas border border-hairline rounded-xl px-4 py-2.5 font-black bg-white shadow-inner">{Array.from({length: 31}, (_, i) => i + 1).map(d => <option key={d} value={d}>{d}일</option>)}</select>
-                    </div>
-                  </div>
-
-                  <div className="col-span-2 grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">카테고리</label>
-                      <select name="category" defaultValue={editingSub?.category || '디지털 구독'} className="w-full bg-canvas border border-hairline rounded-xl px-4 py-2.5 font-black bg-white shadow-inner">
-                        {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">결제 수단 명칭</label>
-                      <input required name="payment_method" defaultValue={editingSub?.payment_method} type="text" placeholder="예: 신한카드 1234" className="w-full bg-canvas border border-hairline rounded-xl px-4 py-2.5 text-sm font-black outline-none focus:bg-white focus:border-primary shadow-inner" />
-                    </div>
-                  </div>
-
-                  <div className="col-span-2">
-                    <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">메모</label>
-                    <textarea name="memo" defaultValue={editingSub?.memo || ''} rows={2} placeholder="추가 정보를 입력하세요..." className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 text-sm font-medium outline-none focus:bg-white focus:border-primary transition-all resize-none shadow-inner leading-relaxed" />
+                    <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">통화</label>
+                    <select name="currency" defaultValue={editingSub?.currency || 'KRW'} className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 font-bold text-sm outline-none"><option value="KRW">KRW (₩)</option><option value="USD">USD ($)</option></select>
                   </div>
                 </div>
-
-                <div className="fixed sm:static bottom-0 left-0 right-0 p-8 sm:p-0 bg-white sm:bg-transparent border-t border-hairline sm:border-none flex flex-col sm:flex-row gap-3 mt-6">
-                  <button type="button" onClick={() => { setIsModalOpen(false); setEditingSub(null); }} className="order-2 sm:order-1 flex-1 py-3.5 font-black text-[#717171] hover:bg-canvas rounded-xl transition-all text-sm">취소</button>
-                  <button type="submit" disabled={isSubmitting} className="order-1 sm:order-2 flex-[2] bg-primary text-white py-3.5 rounded-xl font-black text-base hover:bg-primary-dark shadow-md flex items-center justify-center gap-2 active:scale-95 transition-all shadow-primary/20">
+                <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                  <button type="button" onClick={() => { setIsModalOpen(false); setEditingSub(null); }} className="flex-1 py-3.5 font-bold text-[#717171] hover:bg-[#f7f7f7] rounded-lg transition-all text-sm">취소</button>
+                  <button type="submit" disabled={isSubmitting} className="flex-[2] bg-primary text-white py-3.5 rounded-lg font-bold text-base hover:bg-[#e00b41] shadow-md flex items-center justify-center gap-2">
                     {isSubmitting && <Loader2 className="animate-spin" size={18} />}
-                    {editingSub ? '수정 완료' : '지출 등록'}
+                    저장하기
                   </button>
                 </div>
               </form>
