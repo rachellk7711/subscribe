@@ -1,4 +1,4 @@
-// Bug Fix: Ensure all database fields (including user_type) are sent correctly
+// Layout Update: Move Memo to its own column next to Payment Method
 import { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, 
@@ -77,7 +77,6 @@ function App() {
     setIsSubmitting(true);
     const formData = new FormData(e.currentTarget);
     
-    // DB 에러를 방지하기 위해 모든 필드를 명시적으로 구성
     const subData = {
       service_name: formData.get('service_name') as string,
       amount: parseFloat(formData.get('amount') as string),
@@ -91,7 +90,7 @@ function App() {
       is_variable: formData.get('is_variable') === 'on',
       annual_type: (formData.get('annual_type') as 'split' | 'single') || 'single',
       payment_type: (formData.get('payment_type') as 'auto' | 'manual') || 'auto',
-      user_type: 'personal', // 필수 필드 누락 방지
+      user_type: 'personal',
     };
 
     const { error } = editingSub 
@@ -195,7 +194,7 @@ function App() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <div>
               <h2 className="text-3xl lg:text-4xl font-black tracking-tight text-ink">통합 고정비 대시보드</h2>
-              <p className="text-ink-muted font-medium mt-1">총 {filteredSubs.length}개의 고정비 항목을 관리 중입니다.</p>
+              <p className="text-ink-muted font-medium mt-1">총 {filteredSubs.length}개의 고정비 항목이 관리 중입니다.</p>
             </div>
             <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setIsModalOpen(true); }} className="shrink-0 bg-primary text-white px-8 py-4 rounded-2xl font-black text-lg shadow-lg hover:bg-primary-dark transition-all active:scale-95 shadow-primary/20">
               + 지출 항목 추가
@@ -228,7 +227,7 @@ function App() {
               <h3 className="font-black text-xl text-ink">지출 상세 내역</h3>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[800px]">
+              <table className="w-full text-left border-collapse min-w-[900px]">
                 <thead className="bg-canvas text-ink-muted font-black text-[10px] uppercase tracking-widest border-b border-hairline">
                   <tr>
                     <th className="px-8 py-5 w-16 text-center">납부</th>
@@ -236,6 +235,7 @@ function App() {
                     <th className="px-8 py-5">금액</th>
                     <th className="px-8 py-5">결제예정일</th>
                     <th className="px-8 py-5">결제방식</th>
+                    <th className="px-8 py-5">메모</th>
                     <th className="px-8 py-5 text-right">관리</th>
                   </tr>
                 </thead>
@@ -257,7 +257,6 @@ function App() {
                               {sub.is_variable && <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter shadow-sm">VAR</span>}
                             </span>
                             <span className="text-xs text-ink-muted font-bold mt-0.5">{sub.category}</span>
-                            {sub.memo && <span className="text-[11px] text-ink-muted italic mt-1 truncate max-w-[200px]">{sub.memo}</span>}
                           </div>
                         </td>
                         <td className="px-8 py-7 font-black text-lg text-ink">₩{Math.round(sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount).toLocaleString()}</td>
@@ -272,6 +271,10 @@ function App() {
                               {sub.payment_type === 'auto' ? '자동이체' : '직접납부'}
                             </span>
                           </div>
+                        </td>
+                        {/* 메모 컬럼 추가 */}
+                        <td className="px-8 py-7">
+                          <span className="text-xs text-ink font-medium line-clamp-2 max-w-[200px]">{sub.memo || '-'}</span>
                         </td>
                         <td className="px-8 py-7 text-right">
                           <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all transform group-hover:-translate-x-1">
