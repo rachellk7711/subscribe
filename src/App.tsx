@@ -1,4 +1,4 @@
-// Final UI Polish: Perfect Alignment, Unified Legends, and Balanced Information Architecture
+// UI Polish: Table Header Shading, Larger Titles, Permanent Action Buttons, and Compact D-Day Layout
 import { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, 
@@ -285,11 +285,9 @@ function App() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* 총 지출액 카드: 레이아웃 고정 (좌-우 100% 분리) */}
+            {/* 총 지출액 카드 */}
             <div className="lg:col-span-12 bg-white border border-hairline rounded-airbnb p-10 lg:p-12 shadow-sm relative overflow-hidden group flex flex-col lg:flex-row justify-between items-center">
               <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
-              
-              {/* 좌측: 총 금액 영역 */}
               <div className="z-10 flex flex-col items-center lg:items-start mb-8 lg:mb-0">
                 <p className="text-[11px] font-black text-[#717171] uppercase tracking-widest mb-4">Total Monthly Expenditure</p>
                 <div className="flex items-baseline gap-4">
@@ -297,8 +295,6 @@ function App() {
                   <span className="text-2xl lg:text-3xl text-[#717171] font-bold">/ MO</span>
                 </div>
               </div>
-
-              {/* 우측: 세로 정렬된 지표 박스들 */}
               <div className="z-10 flex flex-col gap-4 w-full lg:w-[320px]">
                 <div className="flex items-center gap-3 px-6 py-4 bg-canvas border border-hairline rounded-2xl">
                   {diff > 0 ? <TrendingUp className="text-primary" size={20} /> : (diff < 0 ? <TrendingDown className="text-green-600" size={20} /> : <Minus className="text-[#717171]" size={20} />)}
@@ -319,7 +315,7 @@ function App() {
               </div>
             </div>
 
-            {/* 하단 시각화 분석 영역: 제목 및 범례 위치 완벽 통일 */}
+            {/* 시각화 분석 영역 */}
             <div className="lg:col-span-8 bg-white border border-hairline rounded-airbnb p-10 shadow-sm min-h-[420px] flex flex-col">
               <div className="flex justify-between items-center mb-10">
                 <h3 className="font-black text-xl text-[#222222] tracking-tight">12개월 지출 추이</h3>
@@ -369,7 +365,6 @@ function App() {
                 <div className="w-48 h-48 relative mb-10 mt-2">
                   <Pie data={pieChartData} options={{ cutout: '80%', plugins: { legend: { display: false } } }} />
                 </div>
-                {/* 파이 차트 범례: 제목 하단이 아닌, 스타일을 추이 차트와 맞춰서 깔끔하게 정돈 */}
                 <div className="grid grid-cols-2 gap-x-8 gap-y-4 w-full px-2">
                   {CATEGORIES.map((cat, i) => (
                     <div key={cat} className="flex items-center gap-3 text-[11px] font-black text-[#717171] hover:text-[#222222] transition-all group">
@@ -382,12 +377,12 @@ function App() {
             </div>
           </div>
 
-          {/* 테이블 영역 */}
+          {/* 테이블 영역: 타이틀 크기 증가 및 버튼 재배치 */}
           <div className="space-y-6 pt-8">
-            <div className="flex justify-between items-end border-b-2 border-hairline pb-4 px-2">
+            <div className="flex justify-between items-end border-b-2 border-hairline pb-5 px-2">
               <div>
-                <h3 className="font-black text-3xl text-[#222222] tracking-tight">지출 상세 내역</h3>
-                <p className="text-sm font-bold text-[#717171] mt-2 flex items-center gap-2">
+                <h3 className="font-black text-4xl lg:text-5xl text-[#222222] tracking-tighter">지출 상세 내역</h3>
+                <p className="text-sm font-bold text-[#717171] mt-3 flex items-center gap-2">
                   <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" /> 결제일 임박순 자동 정렬 시스템
                 </p>
               </div>
@@ -399,15 +394,16 @@ function App() {
             <div className="bg-white border border-hairline rounded-airbnb shadow-sm overflow-hidden mb-20">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse min-w-[1000px]">
-                  <thead className="bg-canvas text-[#717171] font-black text-[11px] uppercase tracking-[0.15em] border-b border-hairline">
+                  {/* 헤더 부분 핑크 음영 적용 */}
+                  <thead className="bg-primary/[0.03] text-[#717171] font-black text-[11px] uppercase tracking-[0.15em] border-b border-hairline">
                     <tr>
-                      <th className="px-8 py-6 w-24 text-center">납부</th>
-                      <th className="px-8 py-6">지출 항목</th>
-                      <th className="px-8 py-6">금액</th>
-                      <th className="px-8 py-6">결제예정일</th>
-                      <th className="px-8 py-6">구독 기간</th>
-                      <th className="px-8 py-6">메모</th>
-                      <th className="px-8 py-6 text-right">관리</th>
+                      <th className="px-8 py-5 w-24 text-center">납부</th>
+                      <th className="px-8 py-5">지출 항목</th>
+                      <th className="px-8 py-5">금액</th>
+                      <th className="px-8 py-5">결제예정일</th>
+                      <th className="px-8 py-5">구독 기간</th>
+                      <th className="px-8 py-5">메모</th>
+                      <th className="px-8 py-5 text-right">관리</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-hairline">
@@ -428,47 +424,49 @@ function App() {
                       
                       return (
                         <tr key={sub.id} className={cn("group transition-colors", isManualUnpaid ? "bg-red-50/50" : "hover:bg-canvas/50")}>
-                          <td className="px-8 py-6 text-center">
+                          <td className="px-8 py-4 text-center">
                             <button onClick={() => togglePaidStatus(sub)} className={cn("transition-all active:scale-90", sub.is_paid ? "text-green-600" : "text-hairline hover:text-[#717171]")}>
                               {sub.is_paid ? <CheckCircle2 size={30} /> : <Circle size={30} />}
                             </button>
                           </td>
-                          <td className="px-8 py-6">
+                          <td className="px-8 py-4">
                             <div className="flex flex-col">
                               <span className="font-black text-xl text-[#222222] flex items-center gap-2 tracking-tight">
                                 {sub.service_name}
                                 {sub.is_variable && <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-md font-black shadow-sm">변동</span>}
                               </span>
-                              <span className="text-[13px] text-[#717171] font-bold mt-1.5">{sub.category}</span>
+                              <span className="text-[12px] text-[#717171] font-bold mt-1">{sub.category}</span>
                             </div>
                           </td>
-                          <td className="px-8 py-6 font-black text-xl text-[#222222] tabular-nums tracking-tight">₩{Math.round(sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount).toLocaleString()}</td>
-                          <td className="px-8 py-6">
-                            <div className="flex flex-col">
-                              <span className="text-[17px] font-black text-[#222222]">{sub.billing_cycle === 'yearly' ? `${sub.billing_month}월 ${sub.billing_date}일` : `매월 ${sub.billing_date}일`}</span>
-                              <div className={cn("text-[11px] font-black mt-2.5 px-3 py-1 rounded-full w-fit shadow-sm border", days <= 3 ? "bg-primary text-white border-primary" : "bg-canvas text-[#717171] border-hairline")}>D-{days === 0 ? 'Day' : days}</div>
+                          <td className="px-8 py-4 font-black text-xl text-[#222222] tabular-nums tracking-tight">₩{Math.round(sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount).toLocaleString()}</td>
+                          <td className="px-8 py-4">
+                            {/* D-Day를 날짜 좌측으로 이동하여 한 줄로 표시 */}
+                            <div className="flex items-center gap-3">
+                              <div className={cn("text-[10px] font-black px-2.5 py-1 rounded-full shadow-sm border shrink-0", days <= 3 ? "bg-primary text-white border-primary" : "bg-canvas text-[#717171] border-hairline")}>D-{days === 0 ? 'Day' : days}</div>
+                              <span className="text-[17px] font-black text-[#222222] whitespace-nowrap">{sub.billing_cycle === 'yearly' ? `${sub.billing_month}월 ${sub.billing_date}일` : `매월 ${sub.billing_date}일`}</span>
                             </div>
                           </td>
-                          <td className="px-8 py-6">
-                            <div className="flex flex-col gap-1.5">
-                              <span className="text-[12px] font-black text-[#484848]">{sub.started_at ? `${sub.started_at.slice(2)} ~` : '시작일 미입력'}</span>
-                              <span className="text-[12px] font-bold text-[#717171]">{sub.ended_at ? `${sub.ended_at.slice(2)} 종료` : '계속 구독 중'}</span>
+                          <td className="px-8 py-4">
+                            <div className="flex flex-col gap-1">
+                              <span className="text-[11px] font-black text-[#484848]">{sub.started_at ? `${sub.started_at.slice(2)} ~` : '시작일 미입력'}</span>
+                              <span className="text-[11px] font-bold text-[#717171]">{sub.ended_at ? `${sub.ended_at.slice(2)} 종료` : '계속 구독 중'}</span>
                             </div>
                           </td>
-                          <td className="px-8 py-6">
-                            <span className="text-[14px] text-[#484848] font-bold line-clamp-2 max-w-[240px] leading-relaxed italic opacity-80">{sub.memo || '-'}</span>
+                          <td className="px-8 py-4">
+                            <span className="text-[13px] text-[#484848] font-bold line-clamp-2 max-w-[240px] leading-relaxed italic opacity-80">{sub.memo || '-'}</span>
                           </td>
-                          <td className="px-8 py-6 text-right">
-                            <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all scale-95 group-hover:scale-100">
-                              <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setHasEndDate(!!sub.ended_at); setIsModalOpen(true); }} className="p-2.5 bg-white border border-hairline rounded-xl hover:shadow-lg transition-all text-[#484848]"><Edit2 size={20} /></button>
-                              <button onClick={async () => { if(window.confirm('정말 삭제할까요?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-red-50 text-red-600 transition-all shadow-sm"><Trash2 size={20} /></button>
+                          <td className="px-8 py-4 text-right">
+                            {/* 관리 버튼 항상 표시 */}
+                            <div className="flex justify-end gap-3 scale-95 origin-right">
+                              <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setHasEndDate(!!sub.ended_at); setIsModalOpen(true); }} className="p-2 bg-white border border-hairline rounded-xl hover:shadow-lg transition-all text-[#484848] shadow-sm"><Edit2 size={18} /></button>
+                              <button onClick={async () => { if(window.confirm('정말 삭제할까요?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2 bg-white border border-hairline rounded-xl hover:bg-red-50 text-red-600 transition-all shadow-sm"><Trash2 size={18} /></button>
                               <div className="relative">
-                                <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"><CalendarIcon size={20} /></button>
+                                <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2 bg-white border border-hairline rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"><CalendarIcon size={18} /></button>
                                 {calendarMenuId === sub.id && (
                                   <div className="absolute right-0 mt-3 w-60 bg-white border border-hairline rounded-2xl shadow-airbnb z-[100] overflow-hidden text-left animate-in fade-in zoom-in-95">
                                     <a href={getNaverCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-7 py-4 text-[13px] font-black text-green-600 hover:bg-green-50 border-b border-hairline transition-colors">네이버 캘린더 등록</a>
                                     <a href={getGoogleCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-7 py-4 text-[13px] font-black text-blue-600 hover:bg-blue-50 border-b border-hairline transition-colors">구글 캘린더 등록</a>
-                                    <button onClick={() => { downloadICS(sub); setCalendarMenuId(null); }} className="w-full text-left px-7 py-4 text-[13px] font-black text-[#222222] hover:bg-canvas transition-colors">ICS 파일로 내보내기</button>
+                                    <button onClick={() => { downloadICS(sub); setCalendarMenuId(null); }} className="w-full text-left px-7 py-4 text-[13px] font-black text-[#222222] hover:bg-canvas transition-colors">ICS 파일 내보내기</button>
                                   </div>
                                 )}
                               </div>
