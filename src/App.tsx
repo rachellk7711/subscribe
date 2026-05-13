@@ -1,4 +1,4 @@
-// Final Master Build: Zero Errors + All Household Features + Tailwind v4 Theme
+// Feature Update: Add Memo field, Reorder Icons, and Auto-close Modal
 import { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, 
@@ -35,7 +35,6 @@ function App() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // 빌드 오류 해결: modalBillingCycle을 실제로 연간 필드 노출 제어에 사용함
   const [modalBillingCycle, setModalBillingCycle] = useState<'monthly'|'yearly'>('monthly');
   const [editingSub, setEditingSub] = useState<Subscription | null>(null);
   const [exchangeRate, setExchangeRate] = useState(1400);
@@ -85,9 +84,8 @@ function App() {
       billing_month: modalBillingCycle === 'yearly' ? parseInt(formData.get('billing_month') as string, 10) : null,
       billing_date: parseInt(formData.get('billing_date') as string, 10),
       payment_method: formData.get('payment_method') as string,
-      user_type: 'personal',
       category: formData.get('category') as string,
-      memo: formData.get('memo') as string || null,
+      memo: formData.get('memo') as string || null, // 메모란 반영
       is_variable: formData.get('is_variable') === 'on',
       annual_type: formData.get('annual_type') as 'split' | 'single',
       payment_type: formData.get('payment_type') as 'auto' | 'manual',
@@ -98,7 +96,13 @@ function App() {
       : await supabase.from('subscriptions').insert([subData]);
 
     setIsSubmitting(false);
-    if (!error) { setIsModalOpen(false); setEditingSub(null); fetchSubscriptions(); }
+    if (!error) { 
+      setIsModalOpen(false); // 창 자동 닫기
+      setEditingSub(null); 
+      fetchSubscriptions(); 
+    } else {
+      alert('저장 중 오류가 발생했습니다.');
+    }
   };
 
   const totalMonthlyKRW = useMemo(() => {
@@ -134,7 +138,7 @@ function App() {
           <h1 className="text-2xl font-black text-primary tracking-tighter flex items-center gap-2">
             <LayoutDashboard size={28} /> 관리자
           </h1>
-          <p className="text-[10px] text-ink-muted font-bold uppercase tracking-widest mt-1">통합 고정비 관리 시스템</p>
+          <p className="text-[10px] text-ink-muted font-bold uppercase tracking-widest mt-1">우리 집 통합 고정비 관리</p>
         </div>
         <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
           {['전체', ...CATEGORIES].map(cat => (
@@ -172,7 +176,6 @@ function App() {
         </div>
       )}
 
-      {/* 메인 영역 */}
       <main className="flex-1 flex flex-col min-w-0 bg-canvas overflow-hidden">
         <header className="h-20 bg-white/80 backdrop-blur-md border-b border-hairline flex items-center justify-between px-6 lg:px-10 shrink-0 z-40 sticky top-0">
           <div className="flex items-center gap-4 flex-1">
@@ -195,7 +198,6 @@ function App() {
             </button>
           </div>
 
-          {/* 지출 카드 */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 bg-white border border-hairline rounded-airbnb p-8 lg:p-12 shadow-sm relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-primary/10 transition-colors duration-500" />
@@ -217,7 +219,6 @@ function App() {
             </div>
           </div>
 
-          {/* 리스트 테이블 */}
           <div className="bg-white border border-hairline rounded-airbnb shadow-sm overflow-hidden mb-10">
             <div className="px-8 py-6 border-b border-hairline bg-canvas/30">
               <h3 className="font-black text-xl text-ink">지출 상세 내역</h3>
@@ -249,9 +250,10 @@ function App() {
                           <div className="flex flex-col">
                             <span className="font-black text-lg text-ink flex items-center gap-2">
                               {sub.service_name}
-                              {sub.is_variable && <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter shadow-sm">변동비</span>}
+                              {sub.is_variable && <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-black uppercase tracking-tighter shadow-sm">VAR</span>}
                             </span>
                             <span className="text-xs text-ink-muted font-bold mt-0.5">{sub.category}</span>
+                            {sub.memo && <span className="text-[11px] text-ink-muted italic mt-1 truncate max-w-[200px]">{sub.memo}</span>}
                           </div>
                         </td>
                         <td className="px-8 py-7 font-black text-lg text-ink">₩{Math.round(sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount).toLocaleString()}</td>
@@ -269,6 +271,9 @@ function App() {
                         </td>
                         <td className="px-8 py-7 text-right">
                           <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all transform group-hover:-translate-x-1">
+                            {/* 아이콘 순서 재배치: 수정 -> 삭제 -> 캘린더 */}
+                            <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setIsModalOpen(true); }} className="p-2.5 bg-white border border-hairline rounded-xl hover:shadow-md transition-all"><Edit2 size={18} /></button>
+                            <button onClick={async () => { if(window.confirm('정말 삭제할까요?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-red-50 text-red-600 transition-all"><Trash2 size={18} /></button>
                             <div className="relative">
                               <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"><Calendar size={18} /></button>
                               {calendarMenuId === sub.id && (
@@ -279,8 +284,6 @@ function App() {
                                 </div>
                               )}
                             </div>
-                            <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setIsModalOpen(true); }} className="p-2.5 bg-white border border-hairline rounded-xl hover:shadow-md transition-all"><Edit2 size={18} /></button>
-                            <button onClick={async () => { if(window.confirm('정말 삭제할까요?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-red-50 text-red-600 transition-all"><Trash2 size={18} /></button>
                           </div>
                         </td>
                       </tr>
@@ -365,7 +368,14 @@ function App() {
                       <input name="payment_method" defaultValue={editingSub?.payment_method} type="text" placeholder="예: 신한카드 1234" className="w-full bg-canvas border border-hairline rounded-2xl px-5 py-3.5 font-black" />
                     </div>
                   </div>
+
+                  {/* 메모란 추가 */}
+                  <div className="col-span-2">
+                    <label className="block text-[11px] font-black text-ink-muted uppercase tracking-widest mb-2.5">메모</label>
+                    <textarea name="memo" defaultValue={editingSub?.memo || ''} rows={3} placeholder="추가 정보를 입력하세요..." className="w-full bg-canvas border border-hairline rounded-2xl px-5 py-4 text-sm font-medium outline-none focus:bg-white focus:border-primary transition-all resize-none" />
+                  </div>
                 </div>
+
                 <div className="fixed sm:static bottom-0 left-0 right-0 p-8 sm:p-0 bg-white sm:bg-transparent border-t border-hairline sm:border-none flex flex-col sm:flex-row gap-4 mt-8">
                   <button type="button" onClick={() => { setIsModalOpen(false); setEditingSub(null); }} className="order-2 sm:order-1 flex-1 py-5 font-black text-ink-muted hover:bg-canvas rounded-2xl transition-all">취소</button>
                   <button type="submit" disabled={isSubmitting} className="order-1 sm:order-2 flex-[2] bg-primary text-white py-5 rounded-2xl font-black text-xl hover:bg-primary-dark shadow-lg flex items-center justify-center gap-3 active:scale-95 transition-all shadow-primary/20">
