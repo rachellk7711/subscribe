@@ -40,7 +40,6 @@ const getDaysRemaining = (billingDate: number) => {
 
 function App() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-  const [loadingData, setLoadingData] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalBillingCycle, setModalBillingCycle] = useState<'monthly'|'yearly'>('monthly');
@@ -62,7 +61,6 @@ function App() {
   }, []);
 
   const fetchSubscriptions = async () => {
-    setLoadingData(true);
     const { data, error } = await supabase
       .from('subscriptions')
       .select('*')
@@ -70,7 +68,6 @@ function App() {
 
     if (error) console.error('Error fetching subscriptions:', error);
     else setSubscriptions(data as Subscription[]);
-    setLoadingData(false);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
