@@ -1,32 +1,60 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
-@theme {
-  --color-primary: #ff385c;
-  --color-primary-active: #e00b41;
-  --color-primary-disabled: #ffd1da;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Deep Navy Theme - Professional & Premium */
+  --navy-deep: #0a1128;
+  --navy-base: #001f3f;
+  --navy-soft: #1a2a44;
+  --gold-primary: #d4af37;
+  --gold-soft: #f4e4bc;
+  --ink-white: #ffffff;
+  --ink-gray: #a0aec0;
+  --danger-red: #ff4d4d;
+  --success-green: #2ecc71;
+  --canvas-bg: #050a18;
   
-  --color-ink: #222222;
-  --color-body: #3f3f3f;
-  --color-muted: #6a6a6a;
-  
-  --color-canvas: #ffffff;
-  --color-surface-soft: #f7f7f7;
-  --color-surface-strong: #f2f2f2;
-  
-  --color-hairline: #dddddd;
-  --color-hairline-soft: #ebebeb;
-  
-  --shadow-airbnb: 0px 1px 2px rgba(0,0,0,0.08), 0px 4px 12px rgba(0,0,0,0.05);
-  --shadow-airbnb-hover: 0px 2px 4px rgba(0,0,0,0.18);
+  --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 @layer base {
   body {
-    background-color: var(--color-canvas);
-    color: var(--color-ink);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    @apply bg-[var(--canvas-bg)] text-[var(--ink-white)] font-sans antialiased;
   }
+}
+
+@layer components {
+  .card-premium {
+    @apply bg-[var(--navy-soft)] border border-white/10 rounded-[24px] shadow-2xl backdrop-blur-sm transition-all duration-300;
+  }
+  
+  .btn-gold {
+    @apply bg-gradient-to-r from-[var(--gold-primary)] to-[#f1c40f] text-[var(--navy-deep)] font-black rounded-xl shadow-lg hover:shadow-[var(--gold-primary)]/20 active:scale-95 transition-all;
+  }
+  
+  .input-navy {
+    @apply bg-[var(--navy-deep)] border border-white/10 rounded-xl px-4 py-3 text-[var(--ink-white)] outline-none focus:border-[var(--gold-primary)] transition-all;
+  }
+  
+  .tab-active {
+    @apply text-[var(--gold-primary)] border-b-2 border-[var(--gold-primary)] font-black;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--navy-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--navy-soft);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-primary);
 }
