@@ -1,4 +1,4 @@
-// Final UI Optimization: Monthly Trend Bar Chart + Compact Layout 
+// Feature Update: Start/End Date Management + Precise Monthly Simulation Chart
 import { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, 
@@ -64,6 +64,7 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [calendarMenuId, setCalendarMenuId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('전체');
+  const [hasEndDate, setHasEndDate] = useState(false);
 
   const todayDate = new Date();
   const currentMonthNum = todayDate.getMonth() + 1;
@@ -120,6 +121,8 @@ function App() {
       is_variable: formData.get('is_variable') === 'on',
       annual_type: (formData.get('annual_type') as 'split' | 'single') || 'single',
       payment_type: (formData.get('payment_type') as 'auto' | 'manual') || 'auto',
+      started_at: (formData.get('started_at') as string) || todayDate.toISOString().split('T')[0],
+      ended_at: hasEndDate ? (formData.get('ended_at') as string) : null,
       user_type: 'personal',
     };
 
@@ -137,21 +140,32 @@ function App() {
     }
   };
 
-  // 연간 12개월 지출 데이터 계산
+  // 정밀한 12개월 지출 데이터 계산 (시작/종료일 반영)
   const monthlyExpenditureData = useMemo(() => {
     return Array.from({ length: 12 }, (_, i) => {
-      const targetMonth = i + 1;
+      const targetMonthNum = i + 1;
+      const year = todayDate.getFullYear();
+      const firstDay = new Date(year, i, 1);
+      const lastDay = new Date(year, i + 1, 0);
+
       return subscriptions.reduce((sum, sub) => {
+        // 시작/종료일 체크
+        const start = sub.started_at ? new Date(sub.started_at) : null;
+        const end = sub.ended_at ? new Date(sub.ended_at) : null;
+        const isActive = (!start || start <= lastDay) && (!end || end >= firstDay);
+        
+        if (!isActive) return sum;
+
         let amountKRW = sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount;
         if (sub.billing_cycle === 'monthly') return sum + amountKRW;
         if (sub.billing_cycle === 'yearly') {
           if (sub.annual_type === 'split') return sum + (amountKRW / 12);
-          if (sub.billing_month === targetMonth) return sum + amountKRW;
+          if (sub.billing_month === targetMonthNum) return sum + amountKRW;
         }
         return sum;
       }, 0);
     });
-  }, [subscriptions, exchangeRate]);
+  }, [subscriptions, exchangeRate, todayDate]);
 
   const currentMonthTotal = monthlyExpenditureData[currentMonthNum - 1];
   const lastMonthTotal = monthlyExpenditureData[(currentMonthNum - 2 + 12) % 12];
@@ -163,7 +177,7 @@ function App() {
     datasets: [{
       label: '월간 지출액',
       data: monthlyExpenditureData,
-      backgroundColor: monthlyExpenditureData.map((_, i) => i + 1 === currentMonthNum ? '#ff385c' : '#f0f0f0'),
+      backgroundColor: monthlyExpenditureData.map((_, i) => i + 1 === currentMonthNum ? '#ff385c' : '#e5e5e5'),
       borderRadius: 6,
       hoverBackgroundColor: '#ff385c',
     }]
@@ -200,7 +214,7 @@ function App() {
 
   return (
     <div className="flex h-screen bg-canvas text-[#222222] font-sans overflow-hidden">
-      {/* PC 사이드바: 줄간격 타이트하게 조정 */}
+      {/* PC 사이드바 */}
       <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-hairline shrink-0 h-full z-50 shadow-sm">
         <div className="p-8 shrink-0">
           <h1 className="text-xl font-black text-primary tracking-tight flex items-center gap-2 mb-1">
@@ -218,7 +232,7 @@ function App() {
         </nav>
         <div className="p-6 border-t border-hairline bg-white shrink-0">
           <div className="flex items-center gap-3 p-4 bg-canvas rounded-2xl border border-hairline">
-            <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center font-black">A</div>
+            <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center font-black shadow-sm">A</div>
             <div><p className="text-xs font-black">MASTER</p><p className="text-[10px] text-[#717171] font-bold">Household Pro</p></div>
           </div>
         </div>
@@ -256,7 +270,6 @@ function App() {
         </header>
 
         <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-10 pb-32">
-          {/* 대시보드 헤더 */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <div className="flex items-center gap-5">
               <div className="p-4 bg-primary text-white rounded-2xl shadow-lg shadow-primary/20 hidden sm:block">
@@ -272,13 +285,12 @@ function App() {
                 </div>
               </div>
             </div>
-            <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setIsModalOpen(true); }} className="w-full sm:w-auto bg-primary text-white px-6 py-3.5 rounded-2xl font-black text-sm shadow-md hover:bg-primary-dark transition-all active:scale-95 shadow-primary/20">
+            <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setHasEndDate(false); setIsModalOpen(true); }} className="w-full sm:w-auto bg-primary text-white px-6 py-3.5 rounded-2xl font-black text-sm shadow-md hover:bg-primary-dark transition-all active:scale-95 shadow-primary/20">
               + 지출 항목 추가
             </button>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* 총 지출액 카드 */}
             <div className="lg:col-span-8 bg-white border border-hairline rounded-airbnb p-8 lg:p-10 shadow-sm relative overflow-hidden group flex flex-col justify-between min-h-[280px]">
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-primary/10 transition-colors" />
               <div>
@@ -287,7 +299,6 @@ function App() {
                   <span className="text-4xl lg:text-5xl font-black tabular-nums tracking-tighter text-[#222222]">₩{Math.round(currentMonthTotal).toLocaleString()}</span>
                   <span className="text-lg text-[#717171] font-bold">/ MO</span>
                 </div>
-                {/* 전월 대비 지표 */}
                 <div className="mt-4 flex items-center gap-2">
                   {diff > 0 ? <TrendingUp className="text-primary" size={18} /> : (diff < 0 ? <TrendingDown className="text-green-600" size={18} /> : <Minus className="text-[#717171]" size={18} />)}
                   <span className={cn("text-sm font-black", diff > 0 ? "text-primary" : (diff < 0 ? "text-green-600" : "text-[#717171]"))}>
@@ -302,7 +313,6 @@ function App() {
               </div>
             </div>
 
-            {/* 지출 성격별 차트 */}
             <div className="lg:col-span-4 bg-white border border-hairline rounded-airbnb p-8 flex flex-col items-center justify-center min-h-[280px] shadow-sm">
               <div className="w-40 h-40 relative">
                 <Pie data={pieChartData} options={{ cutout: '80%', plugins: { legend: { display: false } } }} />
@@ -310,13 +320,12 @@ function App() {
               <p className="text-xs font-black mt-6 text-[#222222]">지출 성격별 분석</p>
             </div>
 
-            {/* 연간 지출 추이 막대 그래프 */}
             <div className="lg:col-span-12 bg-white border border-hairline rounded-airbnb p-8 lg:p-10 shadow-sm overflow-hidden">
               <div className="flex justify-between items-center mb-8">
-                <h3 className="font-black text-lg text-[#222222] tracking-tight">12개월 지출 추이 <span className="text-xs font-bold text-[#717171] ml-2">(예정 지출액 합계)</span></h3>
+                <h3 className="font-black text-lg text-[#222222] tracking-tight">12개월 지출 추이 <span className="text-xs font-bold text-[#717171] ml-2">(활성 구독 대상)</span></h3>
                 <div className="flex items-center gap-4 text-xs font-bold text-[#717171]">
                   <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-primary rounded-sm" /> <span>현재 달</span></div>
-                  <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-[#f0f0f0] rounded-sm" /> <span>기타 월</span></div>
+                  <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-[#e5e5e5] rounded-sm" /> <span>예측 월</span></div>
                 </div>
               </div>
               <div className="h-64 w-full">
@@ -336,7 +345,6 @@ function App() {
             </div>
           </div>
 
-          {/* 테이블 영역: 상하 간격 타이트하게 조정 */}
           <div className="bg-white border border-hairline rounded-airbnb shadow-sm overflow-hidden mb-10">
             <div className="px-8 py-6 border-b border-hairline bg-canvas/30">
               <h3 className="font-black text-lg text-[#222222] tracking-tight">지출 상세 내역 <span className="text-xs font-bold text-[#717171] ml-2">(결제일 임박순)</span></h3>
@@ -349,7 +357,7 @@ function App() {
                     <th className="px-8 py-4">지출 항목</th>
                     <th className="px-8 py-4">금액</th>
                     <th className="px-8 py-4">결제예정일</th>
-                    <th className="px-8 py-4">결제방식</th>
+                    <th className="px-8 py-4">기간</th>
                     <th className="px-8 py-4">메모</th>
                     <th className="px-8 py-4 text-right">관리</th>
                   </tr>
@@ -392,19 +400,17 @@ function App() {
                           <div className={cn("text-[10px] font-black mt-1.5 px-2 py-0.5 rounded-full w-fit shadow-sm", days <= 3 ? "bg-primary text-white" : "bg-canvas text-[#717171] border border-hairline")}>D-{days === 0 ? 'Day' : days}</div>
                         </td>
                         <td className="px-8 py-4">
-                          <div className="flex flex-col gap-1.5">
-                            <span className="text-sm font-bold text-[#484848] tracking-tight">{sub.payment_method}</span>
-                            <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded w-fit border shadow-sm", sub.payment_type === 'auto' ? "bg-white text-[#717171] border-hairline" : "bg-primary text-white border-primary-dark")}>
-                              {sub.payment_type === 'auto' ? '자동이체' : '직접납부'}
-                            </span>
+                          <div className="flex flex-col gap-1">
+                            <span className="text-[11px] font-bold text-[#484848]">{sub.started_at ? `${sub.started_at.slice(2)} ~` : '시작일 미정'}</span>
+                            <span className="text-[11px] font-medium text-[#717171]">{sub.ended_at ? `${sub.ended_at.slice(2)} 종료` : '계속 구독 중'}</span>
                           </div>
                         </td>
                         <td className="px-8 py-4">
-                          <span className="text-[13px] text-[#484848] font-medium line-clamp-2 max-w-[250px] leading-relaxed italic">{sub.memo || '-'}</span>
+                          <span className="text-[13px] text-[#484848] font-medium line-clamp-2 max-w-[200px] leading-relaxed italic">{sub.memo || '-'}</span>
                         </td>
                         <td className="px-8 py-4 text-right">
                           <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                            <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setIsModalOpen(true); }} className="p-2 bg-white border border-hairline rounded-xl hover:shadow-md transition-all text-[#484848]"><Edit2 size={18} /></button>
+                            <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setHasEndDate(!!sub.ended_at); setIsModalOpen(true); }} className="p-2 bg-white border border-hairline rounded-xl hover:shadow-md transition-all text-[#484848]"><Edit2 size={18} /></button>
                             <button onClick={async () => { if(window.confirm('정말 삭제할까요?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2 bg-white border border-hairline rounded-xl hover:bg-red-50 text-red-600 transition-all shadow-sm"><Trash2 size={18} /></button>
                             <div className="relative">
                               <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2 bg-white border border-hairline rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"><CalendarIcon size={18} /></button>
@@ -444,18 +450,31 @@ function App() {
                   <div>
                     <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">금액</label>
                     <input required name="amount" defaultValue={editingSub?.amount} type="number" step="0.01" className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 text-base font-black outline-none focus:bg-white focus:border-primary shadow-inner" />
-                    <label className="flex items-center gap-2 mt-2.5 cursor-pointer">
-                      <input type="checkbox" name="is_variable" defaultChecked={editingSub?.is_variable} className="w-4 h-4 rounded text-primary" />
-                      <span className="text-[11px] font-bold text-[#717171]">금액 변동비</span>
-                    </label>
                   </div>
                   <div>
                     <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">통화</label>
                     <select name="currency" defaultValue={editingSub?.currency || 'KRW'} className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 font-black text-sm outline-none bg-white shadow-inner"><option value="KRW">KRW (₩)</option><option value="USD">USD ($)</option></select>
                   </div>
+
+                  <div className="col-span-2 grid grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">구독 시작일</label>
+                      <input name="started_at" defaultValue={editingSub?.started_at || todayDate.toISOString().split('T')[0]} type="date" className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 font-bold text-sm shadow-inner" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">구독 종료일</label>
+                      <div className="flex flex-col gap-2">
+                        <input disabled={!hasEndDate} name="ended_at" defaultValue={editingSub?.ended_at || ''} type="date" className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 font-bold text-sm shadow-inner disabled:opacity-30" />
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input type="checkbox" checked={!hasEndDate} onChange={(e) => setHasEndDate(!e.target.checked)} className="w-4 h-4 rounded text-primary" />
+                          <span className="text-[11px] font-bold text-[#717171]">종료일 없음</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                   
                   <div className="col-span-2 border-t border-hairline pt-4">
-                    <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-3">납부 유형</label>
+                    <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-3">납부 주기 및 유형</label>
                     <div className="grid grid-cols-2 gap-3 mb-3">
                       <button type="button" onClick={() => setModalBillingCycle('monthly')} className={cn("py-2.5 rounded-xl border-2 font-black text-sm transition-all", modalBillingCycle === 'monthly' ? "border-primary bg-primary/5 text-primary" : "border-hairline text-[#717171]")}>매월</button>
                       <button type="button" onClick={() => setModalBillingCycle('yearly')} className={cn("py-2.5 rounded-xl border-2 font-black text-sm transition-all", modalBillingCycle === 'yearly' ? "border-primary bg-primary/5 text-primary" : "border-hairline text-[#717171]")}>매년</button>

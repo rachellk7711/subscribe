@@ -25,4 +25,6 @@ export type Subscription = {
   payment_type: 'auto' | 'manual'; // 납부 방식 (자동/직접)
   is_paid: boolean;             // 이번 달 납부 완료 여부
   last_paid_month: string | null; // 마지막 납부 월 (YYYY-MM)
+  started_at: string | null;
+  ended_at: string | null;
 };
