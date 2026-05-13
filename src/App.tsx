@@ -4,7 +4,6 @@ import {
   LayoutDashboard, 
   CreditCard, 
   PieChart as PieChartIcon, 
-  Bell,
   Search,
   X,
   Loader2,
