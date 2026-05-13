@@ -1,4 +1,4 @@
-// Deployment Trigger: Airbnb Style + Calendar Support (Final Fix)
+// Deployment Trigger: Airbnb Style + Calendar Support (Naver Direct Link Added)
 import { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
@@ -19,7 +19,7 @@ import { Pie } from 'react-chartjs-2';
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { supabase, type Subscription } from './lib/supabase';
-import { downloadICS, getGoogleCalendarLink } from './utils/icsGenerator';
+import { downloadICS, getGoogleCalendarLink, getNaverCalendarLink } from './utils/icsGenerator';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -176,7 +176,7 @@ function App() {
           <a href="#" className="flex items-center gap-3 px-4 py-4 text-muted hover:bg-surface-soft hover:text-ink rounded-2xl font-bold text-[15px] transition-all"><CreditCard size={22} /> 구독 관리</a>
           <a href="#" className="flex items-center gap-3 px-4 py-4 text-muted hover:bg-surface-soft hover:text-ink rounded-2xl font-bold text-[15px] transition-all"><PieChartIcon size={22} /> 소비 분석</a>
         </nav>
-        <div className="p-6 border-t border-hairline">
+        <div className="p-6 border-t border-hairline bg-canvas">
           <div className="flex items-center gap-3 p-4 rounded-3xl bg-surface-soft border border-hairline">
             <div className="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center text-xl font-black">A</div>
             <div className="overflow-hidden">
@@ -205,7 +205,7 @@ function App() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <div>
               <h2 className="text-3xl lg:text-4xl font-black text-ink tracking-tight">구독 대시보드</h2>
-              <p className="text-muted text-[16px] lg:text-[18px] font-medium mt-2">오늘도 현명한 소비를 이어가세요.</p>
+              <p className="text-muted text-[16px] lg:text-[18px] font-medium mt-2">사용자님의 {subscriptions.length}개 서비스를 보호하고 있어요.</p>
             </div>
             <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setIsModalOpen(true); }} className="w-full sm:w-auto px-10 py-4 bg-primary text-white rounded-2xl font-black text-[17px] shadow-airbnb active:scale-95 transition-all">+ 새 구독 추가</button>
           </div>
@@ -229,11 +229,10 @@ function App() {
           </div>
 
           <div className="bg-canvas border border-hairline rounded-[32px] shadow-airbnb overflow-hidden">
-            <div className="px-8 lg:px-12 py-8 lg:py-10 border-b border-hairline flex justify-between items-center">
+            <div className="px-8 lg:px-12 py-8 lg:py-10 border-b border-hairline">
               <h3 className="font-black text-ink text-2xl lg:text-3xl tracking-tight">구독 리스트</h3>
             </div>
             
-            {/* Cards for Mobile & Table for Desktop */}
             <div className="lg:hidden space-y-4 p-4">
               {filteredSubs.map((sub) => {
                 const daysRemaining = getDaysRemaining(sub.billing_date);
@@ -258,9 +257,16 @@ function App() {
                         <div className="relative">
                           <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-4 bg-white border border-hairline rounded-2xl shadow-sm active:scale-90 transition-all"><Calendar size={22} /></button>
                           {calendarMenuId === sub.id && (
-                            <div className="absolute bottom-full right-0 mb-3 w-48 bg-white rounded-2xl shadow-2xl border border-hairline overflow-hidden z-50 animate-in slide-in-from-bottom-2">
-                              <button onClick={() => { downloadICS(sub); setCalendarMenuId(null); }} className="w-full px-5 py-4 text-left flex items-center gap-3 hover:bg-surface-soft transition-colors border-b border-hairline font-bold text-sm"><Download size={18} className="text-primary" /> 네이버/애플 (ICS)</button>
-                              <a href={getGoogleCalendarLink(sub)} target="_blank" rel="noopener noreferrer" onClick={() => setCalendarMenuId(null)} className="w-full px-5 py-4 text-left flex items-center gap-3 hover:bg-surface-soft transition-colors font-bold text-sm text-ink"><ExternalLink size={18} className="text-blue-500" /> 구글 캘린더 등록</a>
+                            <div className="absolute bottom-full right-0 mb-3 w-52 bg-white rounded-2xl shadow-2xl border border-hairline overflow-hidden z-[100] animate-in slide-in-from-bottom-2">
+                              <a href={getNaverCalendarLink(sub)} target="_blank" rel="noopener noreferrer" onClick={() => setCalendarMenuId(null)} className="w-full px-5 py-4 text-left flex items-center gap-3 hover:bg-surface-soft transition-colors border-b border-hairline font-bold text-sm text-green-600">
+                                <ExternalLink size={18} /> 네이버 캘린더 등록
+                              </a>
+                              <a href={getGoogleCalendarLink(sub)} target="_blank" rel="noopener noreferrer" onClick={() => setCalendarMenuId(null)} className="w-full px-5 py-4 text-left flex items-center gap-3 hover:bg-surface-soft transition-colors border-b border-hairline font-bold text-sm text-blue-600">
+                                <ExternalLink size={18} /> 구글 캘린더 등록
+                              </a>
+                              <button onClick={() => { downloadICS(sub); setCalendarMenuId(null); }} className="w-full px-5 py-4 text-left flex items-center gap-3 hover:bg-surface-soft transition-colors font-bold text-sm text-ink">
+                                <Download size={18} className="text-primary" /> ICS 파일 다운로드
+                              </button>
                             </div>
                           )}
                         </div>
@@ -273,7 +279,7 @@ function App() {
               })}
             </div>
 
-            <div className="hidden lg:block">
+            <div className="hidden lg:block overflow-x-auto">
               <table className="w-full text-left">
                 <thead className="bg-surface-soft text-muted font-black border-b border-hairline uppercase text-[11px] tracking-widest">
                   <tr><th className="px-12 py-6">서비스</th><th className="px-12 py-6">지출</th><th className="px-12 py-6">결제일</th><th className="px-12 py-6">상태</th><th className="px-12 py-6 text-right">관리</th></tr>
@@ -283,28 +289,34 @@ function App() {
                     const daysRemaining = getDaysRemaining(sub.billing_date);
                     return (
                       <tr key={sub.id} className="hover:bg-surface-soft group transition-all">
-                        <td className="px-12 py-8"><span className="font-black text-ink text-lg block">{sub.service_name}</span><span className="text-xs text-muted font-bold">{sub.category}</span></td>
-                        <td className="px-12 py-8"><span className="font-black text-ink text-lg block">{sub.currency === 'USD' ? '$' : '₩'}{sub.amount.toLocaleString()}</span><span className="text-[11px] font-black uppercase text-rose-500 bg-rose-50 px-2 py-1 rounded-md">{sub.billing_cycle}</span></td>
+                        <td className="px-12 py-8 font-black text-ink text-lg">{sub.service_name}</td>
+                        <td className="px-12 py-8"><span className="font-black text-ink text-lg">₩{Math.round(sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount).toLocaleString()}</span></td>
                         <td className="px-12 py-8 font-black text-ink">{sub.billing_cycle === 'yearly' ? `${sub.billing_month}월 ${sub.billing_date}일` : `매월 ${sub.billing_date}일`}</td>
                         <td className="px-12 py-8">
                           <div className={cn("flex items-center gap-2 px-4 py-2 rounded-full font-black text-xs w-fit shadow-sm", daysRemaining <= 3 ? "bg-primary/10 text-primary" : "bg-surface-strong text-ink")}>
-                            <div className={cn("w-2 h-2 rounded-full", daysRemaining <= 3 ? "bg-primary animate-pulse" : "bg-ink")}></div>
                             D-{daysRemaining === 0 ? 'Day' : daysRemaining}
                           </div>
                         </td>
                         <td className="px-12 py-8 text-right relative">
                           <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all">
                             <div className="relative">
-                              <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-3 bg-white hover:bg-primary hover:text-white rounded-xl shadow-airbnb border border-hairline"><Calendar size={18} /></button>
+                              <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-3 bg-white hover:bg-surface-soft rounded-xl shadow-airbnb border border-hairline transition-all"><Calendar size={20} /></button>
                               {calendarMenuId === sub.id && (
-                                <div className="absolute bottom-full right-0 mb-3 w-48 bg-white rounded-2xl shadow-2xl border border-hairline overflow-hidden z-50 animate-in zoom-in-95">
-                                  <button onClick={() => { downloadICS(sub); setCalendarMenuId(null); }} className="w-full px-5 py-4 text-left flex items-center gap-3 hover:bg-surface-soft border-b border-hairline font-bold text-sm text-ink"><Download size={16} className="text-primary" /> ICS 파일 다운로드</button>
-                                  <a href={getGoogleCalendarLink(sub)} target="_blank" rel="noopener noreferrer" onClick={() => setCalendarMenuId(null)} className="w-full px-5 py-4 text-left flex items-center gap-3 hover:bg-surface-soft font-bold text-sm text-ink"><ExternalLink size={16} className="text-blue-500" /> 구글 캘린더 등록</a>
+                                <div className="absolute bottom-full right-0 mb-3 w-56 bg-white rounded-2xl shadow-2xl border border-hairline overflow-hidden z-[100] animate-in zoom-in-95">
+                                  <a href={getNaverCalendarLink(sub)} target="_blank" rel="noopener noreferrer" onClick={() => setCalendarMenuId(null)} className="w-full px-5 py-4 text-left flex items-center gap-3 hover:bg-surface-soft border-b border-hairline font-bold text-sm text-green-600">
+                                    <ExternalLink size={18} /> 네이버 캘린더 등록
+                                  </a>
+                                  <a href={getGoogleCalendarLink(sub)} target="_blank" rel="noopener noreferrer" onClick={() => setCalendarMenuId(null)} className="w-full px-5 py-4 text-left flex items-center gap-3 hover:bg-surface-soft border-b border-hairline font-bold text-sm text-blue-600">
+                                    <ExternalLink size={18} /> 구글 캘린더 등록
+                                  </a>
+                                  <button onClick={() => { downloadICS(sub); setCalendarMenuId(null); }} className="w-full px-5 py-4 text-left flex items-center gap-3 hover:bg-surface-soft font-bold text-sm text-ink">
+                                    <Download size={18} className="text-primary" /> ICS 파일 다운로드
+                                  </button>
                                 </div>
                               )}
                             </div>
-                            <button onClick={() => handleEditSubscription(sub)} className="p-3 bg-white hover:bg-surface-strong rounded-xl shadow-airbnb border border-hairline"><Edit2 size={18} /></button>
-                            <button onClick={() => handleDeleteSubscription(sub.id)} className="p-3 bg-white hover:bg-primary hover:text-white rounded-xl shadow-airbnb border border-hairline"><Trash2 size={18} /></button>
+                            <button onClick={() => handleEditSubscription(sub)} className="p-3 bg-white hover:bg-surface-soft rounded-xl shadow-airbnb border border-hairline"><Edit2 size={18} /></button>
+                            <button onClick={() => handleDeleteSubscription(sub.id)} className="p-3 bg-white hover:bg-surface-soft rounded-xl shadow-airbnb border border-hairline text-primary"><Trash2 size={18} /></button>
                           </div>
                         </td>
                       </tr>
