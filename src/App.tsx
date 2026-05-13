@@ -1,4 +1,4 @@
-// Feature Update: Start/End Date Management + Precise Monthly Simulation Chart
+// UI Update: Layout Rearrangement and Action Button Repositioning
 import { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, 
@@ -17,7 +17,8 @@ import {
   Clock,
   TrendingUp,
   TrendingDown,
-  Minus
+  Minus,
+  Plus
 } from 'lucide-react';
 import { 
   Chart as ChartJS, 
@@ -140,7 +141,6 @@ function App() {
     }
   };
 
-  // 정밀한 12개월 지출 데이터 계산 (문자열 비교 방식으로 더 정확하게 수정)
   const monthlyExpenditureData = useMemo(() => {
     const year = todayDate.getFullYear();
     return Array.from({ length: 12 }, (_, i) => {
@@ -149,12 +149,9 @@ function App() {
       const targetMonthEnd = `${year}-${String(monthNum).padStart(2, '0')}-${new Date(year, monthNum, 0).getDate()}`;
 
       return subscriptions.reduce((sum, sub) => {
-        // 시작/종료일 체크 (문자열 YYYY-MM-DD 비교는 안전하고 확실함)
         const start = sub.started_at || '1900-01-01';
         const end = sub.ended_at || '2999-12-31';
-        
         const isActive = start <= targetMonthEnd && end >= targetMonthStart;
-        
         if (!isActive) return sum;
 
         let amountKRW = sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount;
@@ -270,7 +267,8 @@ function App() {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-10 pb-32">
+        <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-8 pb-32">
+          {/* 대시보드 상단 헤더 */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <div className="flex items-center gap-5">
               <div className="p-4 bg-primary text-white rounded-2xl shadow-lg shadow-primary/20 hidden sm:block">
@@ -286,50 +284,41 @@ function App() {
                 </div>
               </div>
             </div>
-            <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setHasEndDate(false); setIsModalOpen(true); }} className="w-full sm:w-auto bg-primary text-white px-6 py-3.5 rounded-2xl font-black text-sm shadow-md hover:bg-primary-dark transition-all active:scale-95 shadow-primary/20">
-              + 지출 항목 추가
-            </button>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-8 bg-white border border-hairline rounded-airbnb p-8 lg:p-10 shadow-sm relative overflow-hidden group flex flex-col justify-between min-h-[280px]">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-primary/10 transition-colors" />
+            {/* 총 지출액 카드 (위에 칸) */}
+            <div className="lg:col-span-12 bg-white border border-hairline rounded-airbnb p-8 lg:p-10 shadow-sm relative overflow-hidden group flex flex-col justify-between min-h-[220px]">
+              <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full -mr-24 -mt-24 blur-3xl group-hover:bg-primary/10 transition-colors" />
               <div>
                 <p className="text-[10px] font-black text-[#717171] uppercase tracking-widest mb-4">Total Monthly Expenditure</p>
                 <div className="flex items-baseline gap-3">
-                  <span className="text-4xl lg:text-5xl font-black tabular-nums tracking-tighter text-[#222222]">₩{Math.round(currentMonthTotal).toLocaleString()}</span>
-                  <span className="text-lg text-[#717171] font-bold">/ MO</span>
+                  <span className="text-5xl lg:text-6xl font-black tabular-nums tracking-tighter text-[#222222]">₩{Math.round(currentMonthTotal).toLocaleString()}</span>
+                  <span className="text-xl text-[#717171] font-bold">/ MO</span>
                 </div>
-                <div className="mt-4 flex items-center gap-2">
-                  {diff > 0 ? <TrendingUp className="text-primary" size={18} /> : (diff < 0 ? <TrendingDown className="text-green-600" size={18} /> : <Minus className="text-[#717171]" size={18} />)}
-                  <span className={cn("text-sm font-black", diff > 0 ? "text-primary" : (diff < 0 ? "text-green-600" : "text-[#717171]"))}>
-                    전월 대비 {Math.abs(diffPercent)}% {diff > 0 ? '증가' : (diff < 0 ? '감소' : '동일')}
-                  </span>
-                  <span className="text-xs text-[#717171] font-medium ml-1">(전월 ₩{Math.round(lastMonthTotal).toLocaleString()})</span>
+                <div className="mt-4 flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    {diff > 0 ? <TrendingUp className="text-primary" size={18} /> : (diff < 0 ? <TrendingDown className="text-green-600" size={18} /> : <Minus className="text-[#717171]" size={18} />)}
+                    <span className={cn("text-sm font-black", diff > 0 ? "text-primary" : (diff < 0 ? "text-green-600" : "text-[#717171]"))}>
+                      전월 대비 {Math.abs(diffPercent)}% {diff > 0 ? '증가' : (diff < 0 ? '감소' : '동일')}
+                    </span>
+                  </div>
+                  <div className="px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-black text-primary shadow-sm">납부 진행률: {Math.round((subscriptions.filter(s => s.is_paid).length / (subscriptions.length || 1)) * 100)}%</div>
+                  <div className="px-4 py-1.5 rounded-full bg-canvas border border-hairline text-[11px] font-bold text-[#484848] shadow-sm">환율: ₩{Math.round(exchangeRate)}</div>
                 </div>
-              </div>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <div className="px-4 py-2 rounded-full bg-canvas border border-hairline text-[11px] font-bold text-[#484848] shadow-sm">환율: ₩{Math.round(exchangeRate)}</div>
-                <div className="px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-black text-primary shadow-sm">납부 진행률: {Math.round((subscriptions.filter(s => s.is_paid).length / (subscriptions.length || 1)) * 100)}%</div>
               </div>
             </div>
 
-            <div className="lg:col-span-4 bg-white border border-hairline rounded-airbnb p-8 flex flex-col items-center justify-center min-h-[280px] shadow-sm">
-              <div className="w-40 h-40 relative">
-                <Pie data={pieChartData} options={{ cutout: '80%', plugins: { legend: { display: false } } }} />
-              </div>
-              <p className="text-xs font-black mt-6 text-[#222222]">지출 성격별 분석</p>
-            </div>
-
-            <div className="lg:col-span-12 bg-white border border-hairline rounded-airbnb p-8 lg:p-10 shadow-sm overflow-hidden">
+            {/* 연간 지출 추이 막대 그래프 + 우측에 성격별 분석 */}
+            <div className="lg:col-span-8 bg-white border border-hairline rounded-airbnb p-8 lg:p-10 shadow-sm overflow-hidden">
               <div className="flex justify-between items-center mb-8">
-                <h3 className="font-black text-lg text-[#222222] tracking-tight">12개월 지출 추이 <span className="text-xs font-bold text-[#717171] ml-2">(활성 구독 대상)</span></h3>
-                <div className="flex items-center gap-4 text-xs font-bold text-[#717171]">
+                <h3 className="font-black text-lg text-[#222222] tracking-tight">12개월 지출 추이</h3>
+                <div className="flex items-center gap-4 text-[10px] font-bold text-[#717171]">
                   <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-primary rounded-sm" /> <span>현재 달</span></div>
                   <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-[#e5e5e5] rounded-sm" /> <span>예측 월</span></div>
                 </div>
               </div>
-              <div className="h-64 w-full">
+              <div className="h-56 w-full">
                 <Bar 
                   key={`chart-${monthlyExpenditureData.join('-')}`}
                   data={barChartData} 
@@ -339,98 +328,124 @@ function App() {
                     plugins: { legend: { display: false } },
                     scales: {
                       y: { beginAtZero: true, grid: { display: false }, ticks: { display: false } },
-                      x: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 11 } } }
+                      x: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 10 } } }
                     }
                   }} 
                 />
               </div>
             </div>
+
+            {/* 지출 성격별 분석 (위에 칸 우측으로 이동) */}
+            <div className="lg:col-span-4 bg-white border border-hairline rounded-airbnb p-8 flex flex-col items-center justify-center min-h-[250px] shadow-sm">
+              <h3 className="font-black text-sm text-[#222222] mb-6 self-start">지출 성격별 분석</h3>
+              <div className="w-36 h-36 relative">
+                <Pie data={pieChartData} options={{ cutout: '75%', plugins: { legend: { display: false } } }} />
+              </div>
+              <div className="mt-6 flex flex-wrap justify-center gap-x-4 gap-y-2">
+                {CATEGORIES.slice(0, 3).map((cat, i) => (
+                  <div key={cat} className="flex items-center gap-1.5 text-[10px] font-bold text-[#717171]">
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: pieChartData.datasets[0].backgroundColor[i] }} />
+                    {cat}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
-          <div className="bg-white border border-hairline rounded-airbnb shadow-sm overflow-hidden mb-10">
-            <div className="px-8 py-6 border-b border-hairline bg-canvas/30">
-              <h3 className="font-black text-lg text-[#222222] tracking-tight">지출 상세 내역 <span className="text-xs font-bold text-[#717171] ml-2">(결제일 임박순)</span></h3>
+          {/* 테이블 영역: 지출 항목 추가 버튼을 표 바로 위로 이동 */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-end">
+              <div className="px-2">
+                <h3 className="font-black text-xl text-[#222222] tracking-tight">지출 상세 내역</h3>
+                <p className="text-xs font-bold text-[#717171] mt-1">결제일 임박순으로 정렬됨</p>
+              </div>
+              <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setHasEndDate(false); setIsModalOpen(true); }} className="bg-primary text-white px-6 py-3 rounded-2xl font-black text-sm shadow-lg hover:bg-primary-dark transition-all active:scale-95 flex items-center gap-2 shadow-primary/20">
+                <Plus size={18} /> 지출 항목 추가
+              </button>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[1000px]">
-                <thead className="bg-canvas text-[#717171] font-black text-xs uppercase tracking-widest border-b border-hairline">
-                  <tr>
-                    <th className="px-8 py-4 w-20 text-center">납부</th>
-                    <th className="px-8 py-4">지출 항목</th>
-                    <th className="px-8 py-4">금액</th>
-                    <th className="px-8 py-4">결제예정일</th>
-                    <th className="px-8 py-4">기간</th>
-                    <th className="px-8 py-4">메모</th>
-                    <th className="px-8 py-4 text-right">관리</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-hairline">
-                  {filteredSubs.map((sub) => {
-                    const isManualUnpaid = sub.payment_type === 'manual' && !sub.is_paid;
-                    const getDaysUntil = (sub: Subscription) => {
-                      const currentDay = todayDate.getDate();
-                      if (sub.billing_cycle === 'monthly') {
-                        let diff = sub.billing_date - currentDay;
-                        return diff >= 0 ? diff : diff + 31;
-                      } else {
-                        const targetDate = new Date(todayDate.getFullYear(), (sub.billing_month || 1) - 1, sub.billing_date);
-                        if (targetDate < todayDate) targetDate.setFullYear(todayDate.getFullYear() + 1);
-                        return Math.ceil((targetDate.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24));
-                      }
-                    };
-                    const days = getDaysUntil(sub);
-                    
-                    return (
-                      <tr key={sub.id} className={cn("group transition-colors", isManualUnpaid ? "bg-red-50/50" : "hover:bg-canvas/50")}>
-                        <td className="px-8 py-4 text-center">
-                          <button onClick={() => togglePaidStatus(sub)} className={cn("transition-all active:scale-90", sub.is_paid ? "text-green-600" : "text-hairline hover:text-[#717171]")}>
-                            {sub.is_paid ? <CheckCircle2 size={26} /> : <Circle size={26} />}
-                          </button>
-                        </td>
-                        <td className="px-8 py-4">
-                          <div className="flex flex-col">
-                            <span className="font-black text-lg text-[#222222] flex items-center gap-2 tracking-tight">
-                              {sub.service_name}
-                              {sub.is_variable && <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-black uppercase shadow-sm">변동</span>}
-                            </span>
-                            <span className="text-xs text-[#717171] font-bold mt-0.5">{sub.category}</span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-4 font-black text-lg text-[#222222] tabular-nums tracking-tight">₩{Math.round(sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount).toLocaleString()}</td>
-                        <td className="px-8 py-4 font-black text-[#222222]">
-                          <span className="text-base">{sub.billing_cycle === 'yearly' ? `${sub.billing_month}월 ${sub.billing_date}일` : `매월 ${sub.billing_date}일`}</span>
-                          <div className={cn("text-[10px] font-black mt-1.5 px-2 py-0.5 rounded-full w-fit shadow-sm", days <= 3 ? "bg-primary text-white" : "bg-canvas text-[#717171] border border-hairline")}>D-{days === 0 ? 'Day' : days}</div>
-                        </td>
-                        <td className="px-8 py-4">
-                          <div className="flex flex-col gap-1">
-                            <span className="text-[11px] font-bold text-[#484848]">{sub.started_at ? `${sub.started_at.slice(2)} ~` : '시작일 미정'}</span>
-                            <span className="text-[11px] font-medium text-[#717171]">{sub.ended_at ? `${sub.ended_at.slice(2)} 종료` : '계속 구독 중'}</span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-4">
-                          <span className="text-[13px] text-[#484848] font-medium line-clamp-2 max-w-[200px] leading-relaxed italic">{sub.memo || '-'}</span>
-                        </td>
-                        <td className="px-8 py-4 text-right">
-                          <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                            <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setHasEndDate(!!sub.ended_at); setIsModalOpen(true); }} className="p-2 bg-white border border-hairline rounded-xl hover:shadow-md transition-all text-[#484848]"><Edit2 size={18} /></button>
-                            <button onClick={async () => { if(window.confirm('정말 삭제할까요?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2 bg-white border border-hairline rounded-xl hover:bg-red-50 text-red-600 transition-all shadow-sm"><Trash2 size={18} /></button>
-                            <div className="relative">
-                              <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2 bg-white border border-hairline rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"><CalendarIcon size={18} /></button>
-                              {calendarMenuId === sub.id && (
-                                <div className="absolute right-0 mt-2 w-56 bg-white border border-hairline rounded-2xl shadow-airbnb z-[100] overflow-hidden text-left animate-in fade-in zoom-in-95">
-                                  <a href={getNaverCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-6 py-4 text-sm font-black text-green-600 hover:bg-green-50 border-b border-hairline transition-colors">네이버 일정</a>
-                                  <a href={getGoogleCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-6 py-4 text-sm font-black text-blue-600 hover:bg-blue-50 border-b border-hairline transition-colors">구글 일정</a>
-                                  <button onClick={() => { downloadICS(sub); setCalendarMenuId(null); }} className="w-full text-left px-6 py-4 text-sm font-black text-[#222222] hover:bg-canvas transition-colors">ICS 내보내기</button>
-                                </div>
-                              )}
+            
+            <div className="bg-white border border-hairline rounded-airbnb shadow-sm overflow-hidden mb-10">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[1000px]">
+                  <thead className="bg-canvas text-[#717171] font-black text-xs uppercase tracking-widest border-b border-hairline">
+                    <tr>
+                      <th className="px-8 py-4 w-20 text-center">납부</th>
+                      <th className="px-8 py-4">지출 항목</th>
+                      <th className="px-8 py-4">금액</th>
+                      <th className="px-8 py-4">결제예정일</th>
+                      <th className="px-8 py-4">기간</th>
+                      <th className="px-8 py-4">메모</th>
+                      <th className="px-8 py-4 text-right">관리</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-hairline">
+                    {filteredSubs.map((sub) => {
+                      const isManualUnpaid = sub.payment_type === 'manual' && !sub.is_paid;
+                      const getDaysUntil = (sub: Subscription) => {
+                        const currentDay = todayDate.getDate();
+                        if (sub.billing_cycle === 'monthly') {
+                          let diff = sub.billing_date - currentDay;
+                          return diff >= 0 ? diff : diff + 31;
+                        } else {
+                          const targetDate = new Date(todayDate.getFullYear(), (sub.billing_month || 1) - 1, sub.billing_date);
+                          if (targetDate < todayDate) targetDate.setFullYear(todayDate.getFullYear() + 1);
+                          return Math.ceil((targetDate.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24));
+                        }
+                      };
+                      const days = getDaysUntil(sub);
+                      
+                      return (
+                        <tr key={sub.id} className={cn("group transition-colors", isManualUnpaid ? "bg-red-50/50" : "hover:bg-canvas/50")}>
+                          <td className="px-8 py-4 text-center">
+                            <button onClick={() => togglePaidStatus(sub)} className={cn("transition-all active:scale-90", sub.is_paid ? "text-green-600" : "text-hairline hover:text-[#717171]")}>
+                              {sub.is_paid ? <CheckCircle2 size={26} /> : <Circle size={26} />}
+                            </button>
+                          </td>
+                          <td className="px-8 py-4">
+                            <div className="flex flex-col">
+                              <span className="font-black text-lg text-[#222222] flex items-center gap-2 tracking-tight">
+                                {sub.service_name}
+                                {sub.is_variable && <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-black uppercase shadow-sm">변동</span>}
+                              </span>
+                              <span className="text-xs text-[#717171] font-bold mt-0.5">{sub.category}</span>
                             </div>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                          </td>
+                          <td className="px-8 py-4 font-black text-lg text-[#222222] tabular-nums tracking-tight">₩{Math.round(sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount).toLocaleString()}</td>
+                          <td className="px-8 py-4 font-black text-[#222222]">
+                            <span className="text-base">{sub.billing_cycle === 'yearly' ? `${sub.billing_month}월 ${sub.billing_date}일` : `매월 ${sub.billing_date}일`}</span>
+                            <div className={cn("text-[10px] font-black mt-1.5 px-2 py-0.5 rounded-full w-fit shadow-sm", days <= 3 ? "bg-primary text-white" : "bg-canvas text-[#717171] border border-hairline")}>D-{days === 0 ? 'Day' : days}</div>
+                          </td>
+                          <td className="px-8 py-4">
+                            <div className="flex flex-col gap-1">
+                              <span className="text-[11px] font-bold text-[#484848]">{sub.started_at ? `${sub.started_at.slice(2)} ~` : '시작일 미정'}</span>
+                              <span className="text-[11px] font-medium text-[#717171]">{sub.ended_at ? `${sub.ended_at.slice(2)} 종료` : '계속 구독 중'}</span>
+                            </div>
+                          </td>
+                          <td className="px-8 py-4">
+                            <span className="text-[13px] text-[#484848] font-medium line-clamp-2 max-w-[250px] leading-relaxed italic">{sub.memo || '-'}</span>
+                          </td>
+                          <td className="px-8 py-4 text-right">
+                            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                              <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setHasEndDate(!!sub.ended_at); setIsModalOpen(true); }} className="p-2 bg-white border border-hairline rounded-xl hover:shadow-md transition-all text-[#484848]"><Edit2 size={18} /></button>
+                              <button onClick={async () => { if(window.confirm('정말 삭제할까요?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2 bg-white border border-hairline rounded-xl hover:bg-red-50 text-red-600 transition-all shadow-sm"><Trash2 size={18} /></button>
+                              <div className="relative">
+                                <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2 bg-white border border-hairline rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"><CalendarIcon size={18} /></button>
+                                {calendarMenuId === sub.id && (
+                                  <div className="absolute right-0 mt-2 w-56 bg-white border border-hairline rounded-2xl shadow-airbnb z-[100] overflow-hidden text-left animate-in fade-in zoom-in-95">
+                                    <a href={getNaverCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-6 py-4 text-sm font-black text-green-600 hover:bg-green-50 border-b border-hairline transition-colors">네이버 일정</a>
+                                    <a href={getGoogleCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-6 py-4 text-sm font-black text-blue-600 hover:bg-blue-50 border-b border-hairline transition-colors">구글 일정</a>
+                                    <button onClick={() => { downloadICS(sub); setCalendarMenuId(null); }} className="w-full text-left px-6 py-4 text-sm font-black text-[#222222] hover:bg-canvas transition-colors">ICS 내보내기</button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
