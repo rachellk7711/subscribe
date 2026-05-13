@@ -381,17 +381,17 @@ function App() {
             </div>
           </div>
 
-          {/* 테이블 영역: 타이틀 크기 증가 및 버튼 재배치 */}
-          <div className="space-y-6 pt-8">
-            <div className="flex justify-between items-end border-b-2 border-hairline pb-5 px-2">
+          {/* 테이블 영역: 타이틀 크기를 상단 지출액 수준으로 축소 및 간격 최적화 */}
+          <div className="space-y-6 pt-4">
+            <div className="flex justify-between items-end border-b border-hairline pb-4 px-2">
               <div>
-                <h3 className="font-black text-4xl lg:text-5xl text-[#222222] tracking-tighter">지출 상세 내역</h3>
-                <p className="text-sm font-bold text-[#717171] mt-3 flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" /> 결제일 임박순 자동 정렬 시스템
+                <h3 className="font-black text-2xl lg:text-3xl text-[#222222] tracking-tight">지출 상세 내역</h3>
+                <p className="text-[11px] font-bold text-[#717171] mt-1.5 flex items-center gap-2">
+                  <div className="w-1 h-1 bg-primary rounded-full animate-pulse" /> 결제일 임박순 자동 정렬 시스템
                 </p>
               </div>
-              <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setHasEndDate(false); setIsModalOpen(true); }} className="bg-primary text-white px-8 py-4 rounded-2xl font-black text-base shadow-lg hover:bg-primary-dark transition-all active:scale-95 flex items-center gap-3 shadow-primary/25">
-                <Plus size={22} /> 지출 항목 추가
+              <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setHasEndDate(false); setIsModalOpen(true); }} className="bg-primary text-white px-6 py-3 rounded-2xl font-black text-sm shadow-lg hover:bg-primary-dark transition-all active:scale-95 flex items-center gap-2 shadow-primary/25">
+                <Plus size={18} /> 지출 항목 추가
               </button>
             </div>
             
