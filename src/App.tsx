@@ -1,4 +1,4 @@
-// UI Refinement: Implementing Airbnb Design Language based on DESIGN.md
+// Build Stability Fix: Removed all unused imports and variables to ensure a clean production build
 import { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, 
@@ -13,11 +13,8 @@ import {
   Circle,
   ChevronRight,
   Filter,
-  BarChart3,
-  Clock,
   TrendingUp,
   TrendingDown,
-  Minus,
   Plus,
   AlertCircle
 } from 'lucide-react';
@@ -52,7 +49,7 @@ ChartJS.register(
 );
 
 const CATEGORIES = [
-  '디지털 구독', '생활/주거', '교육/가곡', '보험/금융', '세금/연간', '운동/취미'
+  '디지털 구독', '생활/주거', '교육/가족', '보험/금융', '세금/연간', '운동/취미'
 ];
 
 function App() {
@@ -213,7 +210,7 @@ function App() {
 
   return (
     <div className="flex h-screen bg-white text-[#222222] font-sans overflow-hidden">
-      {/* PC 사이드바: 에어비앤비 스타일 (순백색, 부드러운 라운딩, 중간 굵기 폰트) */}
+      {/* PC 사이드바 */}
       <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-[#ebebeb] shrink-0 h-full z-50">
         <div className="p-10 shrink-0">
           <h1 className="text-xl font-bold text-primary tracking-tight flex items-center gap-2 mb-1">
@@ -270,7 +267,6 @@ function App() {
         </header>
 
         <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-12 pb-32">
-          {/* 에어비앤비 스타일: 섹션 헤더 (절제된 굵기, 넉넉한 여백) */}
           <div className="flex items-center gap-4">
             <div>
               <h2 className="text-2xl font-bold tracking-tight text-[#222222]">구독 대시보드</h2>
@@ -283,7 +279,6 @@ function App() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* 총 지출액 카드: 에어비앤비 스타일 (순백색, 미세 그림자, rounded-2xl) */}
             <div className="lg:col-span-12 bg-white border border-[#ebebeb] rounded-2xl p-8 shadow-[0_6px_16px_rgba(0,0,0,0.12)] flex flex-col lg:flex-row justify-between items-center">
               <div className="flex flex-col items-center lg:items-start mb-6 lg:mb-0">
                 <p className="text-[11px] font-bold text-[#717171] uppercase tracking-wider mb-2">Total Monthly Spend</p>
@@ -292,7 +287,7 @@ function App() {
                   <span className="text-lg text-[#717171] font-medium">/ mo</span>
                 </div>
               </div>
-              <div className="flex flex-col gap-3 w-full lg:w-[280px]">
+              <div className="z-10 flex flex-col gap-3 w-full lg:w-[280px]">
                 <div className="flex items-center justify-between px-5 py-3 bg-[#f7f7f7] rounded-xl">
                   <span className="text-xs font-bold text-[#484848]">전월 대비</span>
                   <div className="flex items-center gap-2 font-bold text-sm">
@@ -307,7 +302,6 @@ function App() {
               </div>
             </div>
 
-            {/* 차트 영역: 디자인 가이드 기반 정돈 */}
             <div className="lg:col-span-8 bg-white border border-[#ebebeb] rounded-2xl p-8 shadow-sm h-[400px] flex flex-col">
               <h3 className="font-bold text-lg text-[#222222] mb-8">지출 추이</h3>
               <div className="flex-1 w-full">
@@ -333,7 +327,6 @@ function App() {
             </div>
           </div>
 
-          {/* 지출 상세 내역: 에어비앤비 가이드 기반 격줄 음영 & 폰트 최적화 */}
           <div className="space-y-6 pt-4">
             <div className="flex justify-between items-end border-b border-[#ebebeb] pb-6 px-1">
               <div>
@@ -348,7 +341,6 @@ function App() {
             <div className="bg-white border border-[#ebebeb] rounded-2xl shadow-sm overflow-hidden mb-20">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse min-w-[1000px]">
-                  {/* 헤더: 에어비앤비 스타일 (stronger pink header) */}
                   <thead className="bg-[#fff1f3] text-[#222222] font-bold text-xs border-b border-[#ebebeb]">
                     <tr>
                       <th className="px-8 py-5 w-24 text-center">납부</th>
@@ -360,7 +352,6 @@ function App() {
                       <th className="px-8 py-5 text-right">관리</th>
                     </tr>
                   </thead>
-                  {/* 본문: 은은한 격줄 음영 (#f7f7f7) */}
                   <tbody className="divide-y divide-[#ebebeb]">
                     {filteredSubs.map((sub) => {
                       const isManualUnpaid = sub.payment_type === 'manual' && !sub.is_paid;
@@ -424,7 +415,6 @@ function App() {
           </div>
         </div>
 
-        {/* 모달 창: 에어비앤비 스타일 (순백색, rounded-2xl, soft shadow) */}
         {isModalOpen && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm p-6">
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col h-[85vh] sm:h-auto overflow-hidden">
