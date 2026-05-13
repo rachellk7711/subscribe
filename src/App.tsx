@@ -1,4 +1,4 @@
-// Final Recovery Build: Stable Responsive Layout + Red & White Theme
+// Final Fix: Resolve build errors (chartData & unused imports)
 import { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, 
@@ -9,8 +9,6 @@ import {
   Edit2,
   Calendar,
   Menu,
-  Download,
-  ExternalLink,
   CheckCircle2,
   Circle,
   ChevronRight,
@@ -45,7 +43,6 @@ function App() {
   const [calendarMenuId, setCalendarMenuId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('전체');
 
-  // 데이터 로드 및 초기화 로직
   useEffect(() => {
     fetch('https://open.er-api.com/v6/latest/USD')
       .then(res => res.json())
@@ -123,9 +120,17 @@ function App() {
     sub.service_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const chartData = useMemo(() => ({
+    labels: CATEGORIES,
+    datasets: [{
+      data: CATEGORIES.map(cat => subscriptions.filter(s => s.category === cat).reduce((sum, s) => sum + (s.currency === 'USD' ? s.amount * exchangeRate : s.amount), 0)),
+      backgroundColor: ['#ff385c', '#222222', '#717171', '#ffb6c1', '#f8f9fa', '#dddddd'],
+      borderWidth: 0
+    }]
+  }), [subscriptions, exchangeRate]);
+
   return (
     <div className="flex h-screen bg-[#f7f7f7] text-[#222222] font-sans overflow-hidden">
-      {/* PC Sidebar: Fixed Left */}
       <aside className="hidden lg:flex w-72 bg-white border-r border-gray-200 flex-col shrink-0">
         <div className="p-8">
           <h1 className="text-2xl font-black text-[#ff385c] tracking-tighter flex items-center gap-2">
@@ -149,7 +154,6 @@ function App() {
         </div>
       </aside>
 
-      {/* Mobile Sidebar: Drawer */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-[100] lg:hidden">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
@@ -169,7 +173,6 @@ function App() {
         </div>
       )}
 
-      {/* Main Area */}
       <main className="flex-1 flex flex-col min-w-0 bg-[#f7f7f7] overflow-hidden relative">
         <header className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-6 lg:px-10 shrink-0 z-30">
           <div className="flex items-center gap-4 flex-1">
@@ -182,7 +185,6 @@ function App() {
         </header>
 
         <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-10 pb-32">
-          {/* Dashboard Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <div>
               <h2 className="text-3xl lg:text-4xl font-black tracking-tight text-gray-900">지출 관리 대시보드</h2>
@@ -191,7 +193,6 @@ function App() {
             <button onClick={() => { setEditingSub(null); setIsModalOpen(true); }} className="w-full sm:w-auto bg-[#ff385c] text-white px-8 py-4 rounded-2xl font-black text-lg shadow-lg shadow-[#ff385c]/20 hover:bg-[#e31c5f] transition-all active:scale-95">+ 지출 항목 추가</button>
           </div>
 
-          {/* Stat Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 bg-white border border-gray-200 rounded-[32px] p-8 lg:p-12 shadow-sm relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#ff385c]/5 rounded-full -mr-20 -mt-20 blur-3xl" />
@@ -213,15 +214,12 @@ function App() {
             </div>
           </div>
 
-          {/* List Table */}
           <div className="bg-white border border-gray-200 rounded-[32px] shadow-sm overflow-hidden mb-10">
             <div className="px-8 py-6 border-b border-gray-100 bg-gray-50/50">
               <h3 className="font-black text-xl text-gray-800">지출 상세 내역</h3>
             </div>
-            
-            {/* Desktop Table */}
-            <div className="hidden lg:block overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+            <div className="lg:block overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[800px]">
                 <thead className="bg-gray-50 text-gray-400 font-black text-[10px] uppercase tracking-widest border-b border-gray-100">
                   <tr>
                     <th className="px-8 py-5">납부</th>
@@ -239,7 +237,7 @@ function App() {
                     return (
                       <tr key={sub.id} className={cn("group transition-colors", isManualUnpaid ? "bg-red-50/30" : "hover:bg-gray-50")}>
                         <td className="px-8 py-7">
-                          <button onClick={() => togglePaidStatus(sub)} className={cn("transition-all", sub.is_paid ? "text-green-600 scale-110" : "text-gray-200 hover:text-gray-400")}>
+                          <button onClick={() => togglePaidStatus(sub)} className={cn("transition-all active:scale-90", sub.is_paid ? "text-green-600 scale-110" : "text-gray-200 hover:text-gray-400")}>
                             {sub.is_paid ? <CheckCircle2 size={26} /> : <Circle size={26} />}
                           </button>
                         </td>
@@ -267,17 +265,19 @@ function App() {
                         </td>
                         <td className="px-8 py-7 text-right">
                           <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                            <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2.5 bg-white border border-gray-200 rounded-xl hover:bg-[#ff385c] hover:text-white transition-all shadow-sm"><Calendar size={18} /></button>
-                            <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setIsModalOpen(true); }} className="p-2.5 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all"><Edit2 size={18} /></button>
+                            <div className="relative">
+                              <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2.5 bg-white border border-gray-200 rounded-xl hover:bg-[#ff385c] hover:text-white transition-all shadow-sm"><Calendar size={18} /></button>
+                              {calendarMenuId === sub.id && (
+                                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-2xl shadow-2xl z-50 overflow-hidden text-left animate-in fade-in zoom-in-95">
+                                  <a href={getNaverCalendarLink(sub)} target="_blank" className="block px-5 py-3.5 text-xs font-black text-green-600 hover:bg-green-50 border-b border-gray-100">네이버 등록</a>
+                                  <a href={getGoogleCalendarLink(sub)} target="_blank" className="block px-5 py-3.5 text-xs font-black text-blue-600 hover:bg-blue-50 border-b border-gray-100">구글 등록</a>
+                                  <button onClick={() => downloadICS(sub)} className="w-full text-left px-5 py-3.5 text-xs font-black text-gray-700 hover:bg-gray-50">ICS 파일 저장</button>
+                                </div>
+                              )}
+                            </div>
+                            <button onClick={() => { setEditingSub(sub); setIsModalOpen(true); }} className="p-2.5 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all"><Edit2 size={18} /></button>
                             <button onClick={() => handleDelete(sub.id)} className="p-2.5 bg-white border border-gray-200 rounded-xl hover:bg-red-50 text-red-600 transition-all"><Trash2 size={18} /></button>
                           </div>
-                          {calendarMenuId === sub.id && (
-                            <div className="absolute right-8 mt-2 w-48 bg-white border border-gray-200 rounded-2xl shadow-2xl z-50 overflow-hidden text-left animate-in fade-in zoom-in-95">
-                              <a href={getNaverCalendarLink(sub)} target="_blank" className="block px-5 py-3.5 text-sm font-black text-green-600 hover:bg-green-50 border-b border-gray-100">네이버 캘린더 등록</a>
-                              <a href={getGoogleCalendarLink(sub)} target="_blank" className="block px-5 py-3.5 text-sm font-black text-blue-600 hover:bg-blue-50 border-b border-gray-100">구글 캘린더 등록</a>
-                              <button onClick={() => downloadICS(sub)} className="w-full text-left px-5 py-3.5 text-sm font-black text-gray-700 hover:bg-gray-50">ICS 파일 저장</button>
-                            </div>
-                          )}
                         </td>
                       </tr>
                     );
@@ -285,45 +285,9 @@ function App() {
                 </tbody>
               </table>
             </div>
-
-            {/* Mobile View: Cards */}
-            <div className="lg:hidden divide-y divide-gray-100">
-              {filteredSubs.map((sub) => {
-                const isManualUnpaid = sub.payment_type === 'manual' && !sub.is_paid;
-                return (
-                  <div key={sub.id} className={cn("p-6 relative", isManualUnpaid && "bg-red-50/50")}>
-                    <div className="flex justify-between items-start mb-5">
-                      <div className="flex gap-4">
-                        <button onClick={() => togglePaidStatus(sub)} className={cn("mt-1", sub.is_paid ? "text-green-600" : "text-gray-200")}>
-                          {sub.is_paid ? <CheckCircle2 size={30} /> : <Circle size={30} />}
-                        </button>
-                        <div>
-                          <h4 className="font-black text-lg text-gray-900">{sub.service_name}</h4>
-                          <p className="text-xs font-bold text-gray-400">{sub.category}</p>
-                        </div>
-                      </div>
-                      <div className={cn("px-3 py-1 rounded-full text-[10px] font-black", sub.payment_type === 'auto' ? "bg-gray-100 text-gray-500" : "bg-red-500 text-white")}>
-                        {sub.payment_type === 'auto' ? 'AUTO' : 'MANUAL'}
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-end">
-                      <div>
-                        <p className="text-[22px] font-black text-[#ff385c] tracking-tighter">₩{Math.round(sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount).toLocaleString()}</p>
-                        <p className="text-xs font-bold text-gray-400 mt-0.5">결제: {sub.billing_cycle === 'yearly' ? `${sub.billing_month}월 ` : ''}{sub.billing_date}일</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setIsModalOpen(true); }} className="p-3.5 bg-gray-50 border border-gray-200 rounded-2xl"><Edit2 size={20} /></button>
-                        <button onClick={() => handleDelete(sub.id)} className="p-3.5 bg-red-50 border border-red-100 text-red-600 rounded-2xl"><Trash2 size={20} /></button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
           </div>
         </div>
 
-        {/* Improved Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-md p-0 sm:p-6 animate-in fade-in">
             <div className="bg-white border border-gray-200 rounded-t-[40px] sm:rounded-[40px] shadow-2xl w-full max-w-xl flex flex-col h-[90vh] sm:h-auto mt-auto sm:mt-0 animate-in slide-in-from-bottom sm:zoom-in-95">
