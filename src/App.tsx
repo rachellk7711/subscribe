@@ -1,4 +1,4 @@
-// UI Optimization: Unified Headers, Consistent Legends, and Refined Header Card Layout
+// Final UI Polish: Perfect Alignment, Unified Legends, and Balanced Information Architecture
 import { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, 
@@ -205,7 +205,7 @@ function App() {
     labels: CATEGORIES,
     datasets: [{
       data: CATEGORIES.map(cat => subscriptions.filter(s => s.category === cat).reduce((sum, s) => sum + (s.currency === 'USD' ? s.amount * exchangeRate : s.amount), 0)),
-      backgroundColor: ['#ff385c', '#222222', '#717171', '#ffb6c1', '#f8f9fa', '#dddddd'],
+      backgroundColor: ['#ff385c', '#222222', '#717171', '#ffb6c1', '#c1c1c1', '#dddddd'],
       borderWidth: 0
     }]
   }), [subscriptions, exchangeRate]);
@@ -222,7 +222,7 @@ function App() {
         </div>
         <nav className="flex-1 px-4 space-y-0.5 overflow-y-auto">
           {['전체', ...CATEGORIES].map(cat => (
-            <button key={cat} onClick={() => setActiveTab(cat)} className={cn("w-full flex items-center justify-between px-5 py-2.5 rounded-xl text-sm font-bold transition-all text-left", activeTab === cat ? "bg-primary text-white shadow-md" : "text-[#484848] hover:bg-canvas")}>
+            <button key={cat} onClick={() => setActiveTab(cat)} className={cn("w-full flex items-center justify-between px-5 py-2 rounded-xl text-sm font-bold transition-all text-left", activeTab === cat ? "bg-primary text-white shadow-md" : "text-[#484848] hover:bg-canvas")}>
               <span className="flex items-center gap-3">{cat === '전체' ? <Filter size={18} /> : <div className="w-1.5 h-1.5 rounded-full bg-current" />}{cat}</span>
               {activeTab === cat && <ChevronRight size={16} />}
             </button>
@@ -269,68 +269,70 @@ function App() {
 
         <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-8 pb-32">
           {/* 대시보드 상단 헤더 */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-            <div className="flex items-center gap-5">
-              <div className="p-4 bg-primary text-white rounded-2xl shadow-lg shadow-primary/20 hidden sm:block">
-                <BarChart3 size={28} />
-              </div>
-              <div>
-                <h2 className="text-2xl lg:text-3xl font-black tracking-tight text-[#222222]">통합 고정비 대시보드</h2>
-                <div className="flex items-center gap-3 text-[#717171] font-bold mt-1.5 text-xs">
-                  <Clock size={14} className="text-primary" />
-                  <span>{todayStr}</span>
-                  <span className="mx-1 opacity-30">|</span>
-                  <p>총 {filteredSubs.length}건 관리 중</p>
-                </div>
+          <div className="flex items-center gap-5">
+            <div className="p-4 bg-primary text-white rounded-2xl shadow-lg shadow-primary/20 hidden sm:block">
+              <BarChart3 size={28} />
+            </div>
+            <div>
+              <h2 className="text-2xl lg:text-3xl font-black tracking-tight text-[#222222]">통합 고정비 대시보드</h2>
+              <div className="flex items-center gap-3 text-[#717171] font-bold mt-1.5 text-xs">
+                <Clock size={14} className="text-primary" />
+                <span>{todayStr}</span>
+                <span className="mx-1 opacity-30">|</span>
+                <p>총 {filteredSubs.length}건 관리 중</p>
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* 총 지출액 카드: 레이아웃 최적화 */}
-            <div className="lg:col-span-12 bg-white border border-hairline rounded-airbnb p-8 lg:p-10 shadow-sm relative overflow-hidden group flex flex-col sm:flex-row justify-between items-center min-h-[180px]">
-              <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full -mr-24 -mt-24 blur-3xl group-hover:bg-primary/10 transition-colors pointer-events-none" />
+            {/* 총 지출액 카드: 레이아웃 고정 (좌-우 100% 분리) */}
+            <div className="lg:col-span-12 bg-white border border-hairline rounded-airbnb p-10 lg:p-12 shadow-sm relative overflow-hidden group flex flex-col lg:flex-row justify-between items-center">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
               
-              {/* 좌측: 총 금액 */}
-              <div className="z-10 text-center sm:text-left mb-6 sm:mb-0">
-                <p className="text-[10px] font-black text-[#717171] uppercase tracking-widest mb-3">Total Monthly Expenditure</p>
-                <div className="flex items-baseline justify-center sm:justify-start gap-3">
-                  <span className="text-5xl lg:text-7xl font-black tabular-nums tracking-tighter text-[#222222]">₩{Math.round(currentMonthTotal).toLocaleString()}</span>
-                  <span className="text-xl lg:text-2xl text-[#717171] font-bold">/ MO</span>
+              {/* 좌측: 총 금액 영역 */}
+              <div className="z-10 flex flex-col items-center lg:items-start mb-8 lg:mb-0">
+                <p className="text-[11px] font-black text-[#717171] uppercase tracking-widest mb-4">Total Monthly Expenditure</p>
+                <div className="flex items-baseline gap-4">
+                  <span className="text-6xl lg:text-8xl font-black tabular-nums tracking-tighter text-[#222222]">₩{Math.round(currentMonthTotal).toLocaleString()}</span>
+                  <span className="text-2xl lg:text-3xl text-[#717171] font-bold">/ MO</span>
                 </div>
               </div>
 
-              {/* 우측: 변동 지표, 납부율, 환율 (세로 정돈) */}
-              <div className="z-10 flex flex-col gap-3 w-full sm:w-auto items-center sm:items-end">
-                <div className="flex items-center gap-2 px-5 py-2.5 bg-canvas border border-hairline rounded-2xl w-full sm:w-64">
-                  {diff > 0 ? <TrendingUp className="text-primary shrink-0" size={18} /> : (diff < 0 ? <TrendingDown className="text-green-600 shrink-0" size={18} /> : <Minus className="text-[#717171] shrink-0" size={18} />)}
-                  <span className={cn("text-sm font-black flex-1", diff > 0 ? "text-primary" : (diff < 0 ? "text-green-600" : "text-[#717171]"))}>
+              {/* 우측: 세로 정렬된 지표 박스들 */}
+              <div className="z-10 flex flex-col gap-4 w-full lg:w-[320px]">
+                <div className="flex items-center gap-3 px-6 py-4 bg-canvas border border-hairline rounded-2xl">
+                  {diff > 0 ? <TrendingUp className="text-primary" size={20} /> : (diff < 0 ? <TrendingDown className="text-green-600" size={20} /> : <Minus className="text-[#717171]" size={20} />)}
+                  <span className={cn("text-base font-black", diff > 0 ? "text-primary" : (diff < 0 ? "text-green-600" : "text-[#717171]"))}>
                     전월 대비 {Math.abs(diffPercent)}% {diff > 0 ? '증가' : (diff < 0 ? '감소' : '동일')}
                   </span>
                 </div>
-                <div className="flex items-center gap-3 px-5 py-2.5 bg-primary/5 border border-primary/10 rounded-2xl w-full sm:w-64">
-                  <div className="w-8 h-1.5 bg-hairline rounded-full overflow-hidden flex-1">
+                <div className="flex items-center gap-4 px-6 py-4 bg-primary/5 border border-primary/10 rounded-2xl">
+                  <div className="flex-1 h-2 bg-hairline rounded-full overflow-hidden">
                     <div className="h-full bg-primary" style={{ width: `${Math.round((subscriptions.filter(s => s.is_paid).length / (subscriptions.length || 1)) * 100)}%` }} />
                   </div>
-                  <span className="text-xs font-black text-primary uppercase tracking-tight">납부 {Math.round((subscriptions.filter(s => s.is_paid).length / (subscriptions.length || 1)) * 100)}%</span>
+                  <span className="text-sm font-black text-primary uppercase tracking-tight">납부 {Math.round((subscriptions.filter(s => s.is_paid).length / (subscriptions.length || 1)) * 100)}%</span>
                 </div>
-                <div className="flex items-center justify-between px-5 py-2 bg-canvas border border-hairline rounded-2xl w-full sm:w-64">
-                  <span className="text-[10px] font-bold text-[#717171] uppercase">USD Exchange</span>
-                  <span className="text-xs font-black text-[#484848]">₩{Math.round(exchangeRate).toLocaleString()}</span>
+                <div className="flex items-center justify-between px-6 py-3.5 bg-canvas border border-hairline rounded-2xl">
+                  <span className="text-[11px] font-black text-[#717171] uppercase tracking-wider">USD Exchange Rate</span>
+                  <span className="text-sm font-black text-[#222222]">₩{Math.round(exchangeRate).toLocaleString()}</span>
                 </div>
               </div>
             </div>
 
-            {/* 하단 시각화 분석 영역: 헤더 및 범례 통일 */}
-            <div className="lg:col-span-8 bg-white border border-hairline rounded-airbnb p-8 lg:p-10 shadow-sm overflow-hidden flex flex-col">
-              <div className="flex justify-between items-center mb-8">
+            {/* 하단 시각화 분석 영역: 제목 및 범례 위치 완벽 통일 */}
+            <div className="lg:col-span-8 bg-white border border-hairline rounded-airbnb p-10 shadow-sm min-h-[420px] flex flex-col">
+              <div className="flex justify-between items-center mb-10">
                 <h3 className="font-black text-xl text-[#222222] tracking-tight">12개월 지출 추이</h3>
-                <div className="flex items-center gap-4 text-[10px] font-bold text-[#717171]">
-                  <div className="flex items-center gap-2"><div className="w-3 h-3 bg-primary rounded-[4px]" /> <span>현재 달</span></div>
-                  <div className="flex items-center gap-2"><div className="w-3 h-3 bg-[#e5e5e5] rounded-[4px]" /> <span>예측 월</span></div>
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2 text-[11px] font-black text-[#717171]">
+                    <div className="w-3.5 h-3.5 bg-primary rounded-[4px]" /> <span>현재 달</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[11px] font-black text-[#717171]">
+                    <div className="w-3.5 h-3.5 bg-[#e5e5e5] rounded-[4px]" /> <span>예측 월</span>
+                  </div>
                 </div>
               </div>
-              <div className="h-64 w-full">
+              <div className="flex-1 w-full">
                 <Bar 
                   key={`chart-${monthlyExpenditureData.join('-')}`}
                   data={barChartData} 
@@ -341,9 +343,10 @@ function App() {
                       legend: { display: false },
                       tooltip: {
                         backgroundColor: '#222222',
-                        padding: 12,
-                        titleFont: { weight: 'bold', size: 14 },
-                        bodyFont: { weight: 'bold', size: 13 },
+                        padding: 14,
+                        cornerRadius: 12,
+                        titleFont: { weight: 'bold', size: 15 },
+                        bodyFont: { weight: 'bold', size: 14 },
                         callbacks: {
                           label: (context) => `지출액: ₩${Math.round(context.raw as number).toLocaleString()}`
                         }
@@ -351,25 +354,26 @@ function App() {
                     },
                     scales: {
                       y: { beginAtZero: true, grid: { display: false }, ticks: { display: false } },
-                      x: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 11 }, color: '#717171' } }
+                      x: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 12 }, color: '#717171', padding: 10 } }
                     }
                   }} 
                 />
               </div>
             </div>
 
-            <div className="lg:col-span-4 bg-white border border-hairline rounded-airbnb p-8 lg:p-10 flex flex-col shadow-sm min-h-[350px]">
-              <div className="flex justify-between items-center mb-8">
+            <div className="lg:col-span-4 bg-white border border-hairline rounded-airbnb p-10 shadow-sm min-h-[420px] flex flex-col">
+              <div className="flex justify-between items-center mb-10">
                 <h3 className="font-black text-xl text-[#222222] tracking-tight">지출 성격별 분석</h3>
               </div>
-              <div className="flex-1 flex flex-col items-center justify-center">
-                <div className="w-40 h-40 relative">
-                  <Pie data={pieChartData} options={{ cutout: '78%', plugins: { legend: { display: false } } }} />
+              <div className="flex-1 flex flex-col items-center">
+                <div className="w-48 h-48 relative mb-10 mt-2">
+                  <Pie data={pieChartData} options={{ cutout: '80%', plugins: { legend: { display: false } } }} />
                 </div>
-                <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-3 w-full">
+                {/* 파이 차트 범례: 제목 하단이 아닌, 스타일을 추이 차트와 맞춰서 깔끔하게 정돈 */}
+                <div className="grid grid-cols-2 gap-x-8 gap-y-4 w-full px-2">
                   {CATEGORIES.map((cat, i) => (
-                    <div key={cat} className="flex items-center gap-2.5 text-[10px] font-bold text-[#717171] hover:text-[#222222] transition-colors">
-                      <div className="w-2.5 h-2.5 rounded-[4px] shrink-0" style={{ backgroundColor: pieChartData.datasets[0].backgroundColor[i] }} />
+                    <div key={cat} className="flex items-center gap-3 text-[11px] font-black text-[#717171] hover:text-[#222222] transition-all group">
+                      <div className="w-3.5 h-3.5 rounded-[4px] shrink-0 group-hover:scale-110 transition-transform" style={{ backgroundColor: pieChartData.datasets[0].backgroundColor[i] }} />
                       <span className="truncate">{cat}</span>
                     </div>
                   ))}
@@ -379,31 +383,31 @@ function App() {
           </div>
 
           {/* 테이블 영역 */}
-          <div className="space-y-4 pt-4">
-            <div className="flex justify-between items-end">
-              <div className="px-2">
-                <h3 className="font-black text-2xl text-[#222222] tracking-tight">지출 상세 내역</h3>
-                <p className="text-xs font-bold text-[#717171] mt-1.5 flex items-center gap-2">
-                  <div className="w-1 h-1 bg-primary rounded-full" /> 결제일 임박순 정렬
+          <div className="space-y-6 pt-8">
+            <div className="flex justify-between items-end border-b-2 border-hairline pb-4 px-2">
+              <div>
+                <h3 className="font-black text-3xl text-[#222222] tracking-tight">지출 상세 내역</h3>
+                <p className="text-sm font-bold text-[#717171] mt-2 flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" /> 결제일 임박순 자동 정렬 시스템
                 </p>
               </div>
-              <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setHasEndDate(false); setIsModalOpen(true); }} className="bg-primary text-white px-7 py-3.5 rounded-2xl font-black text-sm shadow-lg hover:bg-primary-dark transition-all active:scale-95 flex items-center gap-2.5 shadow-primary/20">
-                <Plus size={20} /> 지출 항목 추가
+              <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setHasEndDate(false); setIsModalOpen(true); }} className="bg-primary text-white px-8 py-4 rounded-2xl font-black text-base shadow-lg hover:bg-primary-dark transition-all active:scale-95 flex items-center gap-3 shadow-primary/25">
+                <Plus size={22} /> 지출 항목 추가
               </button>
             </div>
             
-            <div className="bg-white border border-hairline rounded-airbnb shadow-sm overflow-hidden mb-10">
+            <div className="bg-white border border-hairline rounded-airbnb shadow-sm overflow-hidden mb-20">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse min-w-[1000px]">
-                  <thead className="bg-canvas text-[#717171] font-black text-xs uppercase tracking-widest border-b border-hairline">
+                  <thead className="bg-canvas text-[#717171] font-black text-[11px] uppercase tracking-[0.15em] border-b border-hairline">
                     <tr>
-                      <th className="px-8 py-5 w-20 text-center">납부</th>
-                      <th className="px-8 py-5">지출 항목</th>
-                      <th className="px-8 py-5">금액</th>
-                      <th className="px-8 py-5">결제예정일</th>
-                      <th className="px-8 py-5">기간</th>
-                      <th className="px-8 py-5">메모</th>
-                      <th className="px-8 py-5 text-right">관리</th>
+                      <th className="px-8 py-6 w-24 text-center">납부</th>
+                      <th className="px-8 py-6">지출 항목</th>
+                      <th className="px-8 py-6">금액</th>
+                      <th className="px-8 py-6">결제예정일</th>
+                      <th className="px-8 py-6">구독 기간</th>
+                      <th className="px-8 py-6">메모</th>
+                      <th className="px-8 py-6 text-right">관리</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-hairline">
@@ -424,45 +428,47 @@ function App() {
                       
                       return (
                         <tr key={sub.id} className={cn("group transition-colors", isManualUnpaid ? "bg-red-50/50" : "hover:bg-canvas/50")}>
-                          <td className="px-8 py-5 text-center">
+                          <td className="px-8 py-6 text-center">
                             <button onClick={() => togglePaidStatus(sub)} className={cn("transition-all active:scale-90", sub.is_paid ? "text-green-600" : "text-hairline hover:text-[#717171]")}>
-                              {sub.is_paid ? <CheckCircle2 size={26} /> : <Circle size={26} />}
+                              {sub.is_paid ? <CheckCircle2 size={30} /> : <Circle size={30} />}
                             </button>
                           </td>
-                          <td className="px-8 py-5">
+                          <td className="px-8 py-6">
                             <div className="flex flex-col">
-                              <span className="font-black text-lg text-[#222222] flex items-center gap-2 tracking-tight">
+                              <span className="font-black text-xl text-[#222222] flex items-center gap-2 tracking-tight">
                                 {sub.service_name}
-                                {sub.is_variable && <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-black uppercase shadow-sm">변동</span>}
+                                {sub.is_variable && <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-md font-black shadow-sm">변동</span>}
                               </span>
-                              <span className="text-xs text-[#717171] font-bold mt-1">{sub.category}</span>
+                              <span className="text-[13px] text-[#717171] font-bold mt-1.5">{sub.category}</span>
                             </div>
                           </td>
-                          <td className="px-8 py-5 font-black text-lg text-[#222222] tabular-nums tracking-tight">₩{Math.round(sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount).toLocaleString()}</td>
-                          <td className="px-8 py-5 font-black text-[#222222]">
-                            <span className="text-base">{sub.billing_cycle === 'yearly' ? `${sub.billing_month}월 ${sub.billing_date}일` : `매월 ${sub.billing_date}일`}</span>
-                            <div className={cn("text-[10px] font-black mt-2 px-2.5 py-0.5 rounded-full w-fit shadow-sm", days <= 3 ? "bg-primary text-white" : "bg-canvas text-[#717171] border border-hairline")}>D-{days === 0 ? 'Day' : days}</div>
-                          </td>
-                          <td className="px-8 py-5">
-                            <div className="flex flex-col gap-1">
-                              <span className="text-[11px] font-bold text-[#484848]">{sub.started_at ? `${sub.started_at.slice(2)} ~` : '시작일 미정'}</span>
-                              <span className="text-[11px] font-medium text-[#717171]">{sub.ended_at ? `${sub.ended_at.slice(2)} 종료` : '계속 구독 중'}</span>
+                          <td className="px-8 py-6 font-black text-xl text-[#222222] tabular-nums tracking-tight">₩{Math.round(sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount).toLocaleString()}</td>
+                          <td className="px-8 py-6">
+                            <div className="flex flex-col">
+                              <span className="text-[17px] font-black text-[#222222]">{sub.billing_cycle === 'yearly' ? `${sub.billing_month}월 ${sub.billing_date}일` : `매월 ${sub.billing_date}일`}</span>
+                              <div className={cn("text-[11px] font-black mt-2.5 px-3 py-1 rounded-full w-fit shadow-sm border", days <= 3 ? "bg-primary text-white border-primary" : "bg-canvas text-[#717171] border-hairline")}>D-{days === 0 ? 'Day' : days}</div>
                             </div>
                           </td>
-                          <td className="px-8 py-5">
-                            <span className="text-[13px] text-[#484848] font-medium line-clamp-2 max-w-[220px] leading-relaxed italic">{sub.memo || '-'}</span>
+                          <td className="px-8 py-6">
+                            <div className="flex flex-col gap-1.5">
+                              <span className="text-[12px] font-black text-[#484848]">{sub.started_at ? `${sub.started_at.slice(2)} ~` : '시작일 미입력'}</span>
+                              <span className="text-[12px] font-bold text-[#717171]">{sub.ended_at ? `${sub.ended_at.slice(2)} 종료` : '계속 구독 중'}</span>
+                            </div>
                           </td>
-                          <td className="px-8 py-5 text-right">
-                            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                              <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setHasEndDate(!!sub.ended_at); setIsModalOpen(true); }} className="p-2 bg-white border border-hairline rounded-xl hover:shadow-md transition-all text-[#484848]"><Edit2 size={18} /></button>
-                              <button onClick={async () => { if(window.confirm('정말 삭제할까요?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2 bg-white border border-hairline rounded-xl hover:bg-red-50 text-red-600 transition-all shadow-sm"><Trash2 size={18} /></button>
+                          <td className="px-8 py-6">
+                            <span className="text-[14px] text-[#484848] font-bold line-clamp-2 max-w-[240px] leading-relaxed italic opacity-80">{sub.memo || '-'}</span>
+                          </td>
+                          <td className="px-8 py-6 text-right">
+                            <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all scale-95 group-hover:scale-100">
+                              <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setHasEndDate(!!sub.ended_at); setIsModalOpen(true); }} className="p-2.5 bg-white border border-hairline rounded-xl hover:shadow-lg transition-all text-[#484848]"><Edit2 size={20} /></button>
+                              <button onClick={async () => { if(window.confirm('정말 삭제할까요?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-red-50 text-red-600 transition-all shadow-sm"><Trash2 size={20} /></button>
                               <div className="relative">
-                                <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2 bg-white border border-hairline rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"><CalendarIcon size={18} /></button>
+                                <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"><CalendarIcon size={20} /></button>
                                 {calendarMenuId === sub.id && (
-                                  <div className="absolute right-0 mt-2 w-56 bg-white border border-hairline rounded-2xl shadow-airbnb z-[100] overflow-hidden text-left animate-in fade-in zoom-in-95">
-                                    <a href={getNaverCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-6 py-4 text-sm font-black text-green-600 hover:bg-green-50 border-b border-hairline transition-colors">네이버 일정</a>
-                                    <a href={getGoogleCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-6 py-4 text-sm font-black text-blue-600 hover:bg-blue-50 border-b border-hairline transition-colors">구글 일정</a>
-                                    <button onClick={() => { downloadICS(sub); setCalendarMenuId(null); }} className="w-full text-left px-6 py-4 text-sm font-black text-[#222222] hover:bg-canvas transition-colors">ICS 내보내기</button>
+                                  <div className="absolute right-0 mt-3 w-60 bg-white border border-hairline rounded-2xl shadow-airbnb z-[100] overflow-hidden text-left animate-in fade-in zoom-in-95">
+                                    <a href={getNaverCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-7 py-4 text-[13px] font-black text-green-600 hover:bg-green-50 border-b border-hairline transition-colors">네이버 캘린더 등록</a>
+                                    <a href={getGoogleCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-7 py-4 text-[13px] font-black text-blue-600 hover:bg-blue-50 border-b border-hairline transition-colors">구글 캘린더 등록</a>
+                                    <button onClick={() => { downloadICS(sub); setCalendarMenuId(null); }} className="w-full text-left px-7 py-4 text-[13px] font-black text-[#222222] hover:bg-canvas transition-colors">ICS 파일로 내보내기</button>
                                   </div>
                                 )}
                               </div>
