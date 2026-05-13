@@ -169,7 +169,7 @@ function App() {
       <aside className="hidden lg:flex flex-col w-80 bg-white border-r border-hairline shrink-0 h-full shadow-sm z-50">
         <div className="p-10 shrink-0">
           <h1 className="text-3xl font-black text-primary tracking-tighter flex items-center gap-3">
-            <LayoutDashboard size={32} /> 관리자
+            <LayoutDashboard size={32} /> 구독/고정비 관리
           </h1>
           <p className="text-[11px] text-gray-500 font-black uppercase tracking-[0.2em] mt-2 opacity-80">통합 고정비 관리 시스템</p>
         </div>
