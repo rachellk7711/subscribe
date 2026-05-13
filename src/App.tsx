@@ -241,7 +241,7 @@ function App() {
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
           <div className="absolute inset-y-0 left-0 w-72 bg-white flex flex-col shadow-2xl animate-in slide-in-from-left duration-300">
             <div className="p-8 flex justify-between items-center border-b border-[#ebebeb] shrink-0">
-              <h1 className="text-xl font-bold text-[#222222]">메뉴</h1>
+              <h1 className="text-xl font-bold text-[#222222]">구독/고정비 관리</h1>
               <button onClick={() => setIsMobileMenuOpen(false)} className="p-2"><X size={24} /></button>
             </div>
             <div className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
@@ -269,7 +269,7 @@ function App() {
         <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-12 pb-32">
           <div className="flex items-center gap-4">
             <div>
-              <h2 className="text-2xl font-bold tracking-tight text-[#222222]">구독 대시보드</h2>
+              <h2 className="text-2xl font-bold tracking-tight text-[#222222]">구독/고정비 대시보드</h2>
               <div className="flex items-center gap-2 text-[#717171] font-medium mt-1 text-xs">
                 <span>{todayStr}</span>
                 <span className="opacity-30">•</span>
