@@ -5,56 +5,79 @@
 @tailwind utilities;
 
 :root {
-  /* Deep Navy Theme - Professional & Premium */
-  --navy-deep: #0a1128;
-  --navy-base: #001f3f;
-  --navy-soft: #1a2a44;
-  --gold-primary: #d4af37;
-  --gold-soft: #f4e4bc;
-  --ink-white: #ffffff;
-  --ink-gray: #a0aec0;
-  --danger-red: #ff4d4d;
-  --success-green: #2ecc71;
-  --canvas-bg: #050a18;
+  /* Airbnb Style - Red & White Theme */
+  --primary-red: #ff385c;
+  --primary-active: #e31c5f;
+  --canvas-bg: #f7f7f7;
+  --surface-white: #ffffff;
+  --surface-soft: #f8f9fa;
+  --surface-strong: #ebebeb;
+  --ink-black: #222222;
+  --ink-muted: #717171;
+  --hairline: #dddddd;
+  --success-green: #008a05;
   
   --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 @layer base {
   body {
-    @apply bg-[var(--canvas-bg)] text-[var(--ink-white)] font-sans antialiased;
+    background-color: var(--canvas-bg);
+    color: var(--ink-black);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
   }
 }
 
-@layer components {
-  .card-premium {
-    @apply bg-[var(--navy-soft)] border border-white/10 rounded-[24px] shadow-2xl backdrop-blur-sm transition-all duration-300;
-  }
-  
-  .btn-gold {
-    @apply bg-gradient-to-r from-[var(--gold-primary)] to-[#f1c40f] text-[var(--navy-deep)] font-black rounded-xl shadow-lg hover:shadow-[var(--gold-primary)]/20 active:scale-95 transition-all;
-  }
-  
-  .input-navy {
-    @apply bg-[var(--navy-deep)] border border-white/10 rounded-xl px-4 py-3 text-[var(--ink-white)] outline-none focus:border-[var(--gold-primary)] transition-all;
-  }
-  
-  .tab-active {
-    @apply text-[var(--gold-primary)] border-b-2 border-[var(--gold-primary)] font-black;
-  }
+/* @apply 대신 표준 CSS 사용으로 빌드 오류 방지 */
+.card-airbnb {
+  background-color: var(--surface-white);
+  border: 1px solid var(--hairline);
+  border-radius: 20px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--primary-red);
+  color: white;
+  font-weight: 900;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-active);
+}
+
+.btn-primary:active {
+  transform: scale(0.95);
+}
+
+.input-standard {
+  background-color: white;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  padding: 12px 16px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input-standard:focus {
+  border-color: var(--primary-red);
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--navy-deep);
+  background: var(--canvas-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--navy-soft);
+  background: var(--hairline);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--gold-primary);
+  background: var(--ink-muted);
 }
