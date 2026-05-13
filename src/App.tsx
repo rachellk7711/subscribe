@@ -117,11 +117,10 @@ function App() {
   };
 
   const totalMonthlyKRW = useMemo(() => {
-    const currentMonthNum = todayDate.getMonth() + 1;
     return subscriptions.reduce((acc, sub) => {
       let amountKRW = sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount;
       if (sub.billing_cycle === 'yearly') {
-        return sub.annual_type === 'split' ? acc + (amountKRW / 12) : (sub.billing_month === currentMonthNum ? acc + amountKRW : acc);
+        return sub.annual_type === 'split' ? acc + (amountKRW / 12) : (sub.billing_month === (todayDate.getMonth() + 1) ? acc + amountKRW : acc);
       }
       return acc + amountKRW;
     }, 0);
