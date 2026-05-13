@@ -1,4 +1,4 @@
-// Feature Update: Add Memo field, Reorder Icons, and Auto-close Modal
+// Bug Fix: Ensure all database fields (including user_type) are sent correctly
 import { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, 
@@ -76,6 +76,8 @@ function App() {
     e.preventDefault();
     setIsSubmitting(true);
     const formData = new FormData(e.currentTarget);
+    
+    // DB 에러를 방지하기 위해 모든 필드를 명시적으로 구성
     const subData = {
       service_name: formData.get('service_name') as string,
       amount: parseFloat(formData.get('amount') as string),
@@ -85,10 +87,11 @@ function App() {
       billing_date: parseInt(formData.get('billing_date') as string, 10),
       payment_method: formData.get('payment_method') as string,
       category: formData.get('category') as string,
-      memo: formData.get('memo') as string || null, // 메모란 반영
+      memo: formData.get('memo') as string || null,
       is_variable: formData.get('is_variable') === 'on',
-      annual_type: formData.get('annual_type') as 'split' | 'single',
-      payment_type: formData.get('payment_type') as 'auto' | 'manual',
+      annual_type: (formData.get('annual_type') as 'split' | 'single') || 'single',
+      payment_type: (formData.get('payment_type') as 'auto' | 'manual') || 'auto',
+      user_type: 'personal', // 필수 필드 누락 방지
     };
 
     const { error } = editingSub 
@@ -97,11 +100,12 @@ function App() {
 
     setIsSubmitting(false);
     if (!error) { 
-      setIsModalOpen(false); // 창 자동 닫기
+      setIsModalOpen(false);
       setEditingSub(null); 
       fetchSubscriptions(); 
     } else {
-      alert('저장 중 오류가 발생했습니다.');
+      console.error('Submit Error:', error);
+      alert(`저장 중 오류가 발생했습니다: ${error.message}`);
     }
   };
 
@@ -191,7 +195,7 @@ function App() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <div>
               <h2 className="text-3xl lg:text-4xl font-black tracking-tight text-ink">통합 고정비 대시보드</h2>
-              <p className="text-ink-muted font-medium mt-1">총 {filteredSubs.length}개의 고정비 항목이 관리 중입니다.</p>
+              <p className="text-ink-muted font-medium mt-1">총 {filteredSubs.length}개의 고정비 항목을 관리 중입니다.</p>
             </div>
             <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setIsModalOpen(true); }} className="shrink-0 bg-primary text-white px-8 py-4 rounded-2xl font-black text-lg shadow-lg hover:bg-primary-dark transition-all active:scale-95 shadow-primary/20">
               + 지출 항목 추가
@@ -271,7 +275,6 @@ function App() {
                         </td>
                         <td className="px-8 py-7 text-right">
                           <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all transform group-hover:-translate-x-1">
-                            {/* 아이콘 순서 재배치: 수정 -> 삭제 -> 캘린더 */}
                             <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setIsModalOpen(true); }} className="p-2.5 bg-white border border-hairline rounded-xl hover:shadow-md transition-all"><Edit2 size={18} /></button>
                             <button onClick={async () => { if(window.confirm('정말 삭제할까요?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-red-50 text-red-600 transition-all"><Trash2 size={18} /></button>
                             <div className="relative">
@@ -369,7 +372,6 @@ function App() {
                     </div>
                   </div>
 
-                  {/* 메모란 추가 */}
                   <div className="col-span-2">
                     <label className="block text-[11px] font-black text-ink-muted uppercase tracking-widest mb-2.5">메모</label>
                     <textarea name="memo" defaultValue={editingSub?.memo || ''} rows={3} placeholder="추가 정보를 입력하세요..." className="w-full bg-canvas border border-hairline rounded-2xl px-5 py-4 text-sm font-medium outline-none focus:bg-white focus:border-primary transition-all resize-none" />
