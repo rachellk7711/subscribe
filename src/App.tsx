@@ -215,7 +215,7 @@ function App() {
         <div className="p-10 shrink-0">
           <h1 className="text-xl font-bold text-primary tracking-tight flex items-center gap-2 mb-1">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white"><LayoutDashboard size={20} /></div>
-            구독 관리
+            구독/고정비 관리
           </h1>
           <p className="text-[10px] text-[#717171] font-medium uppercase tracking-[0.2em] mt-1">Management Pro</p>
         </div>
