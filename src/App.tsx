@@ -1,4 +1,4 @@
-// Design Fix: Restore Premium Airbnb Typography Ratios and Layout Balance
+// UI Update: Enhance Table Readability by Increasing Font Sizes
 import { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, 
@@ -158,8 +158,8 @@ function App() {
 
   return (
     <div className="flex h-screen bg-canvas text-[#222222] font-sans overflow-hidden">
-      {/* PC 사이드바: 비율 재조정 */}
-      <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-hairline shrink-0 h-full z-50">
+      {/* PC 사이드바 */}
+      <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-hairline shrink-0 h-full z-50 shadow-sm">
         <div className="p-8 shrink-0">
           <h1 className="text-xl font-black text-primary tracking-tight flex items-center gap-2 mb-1">
             <LayoutDashboard size={24} /> 구독/고정비 관리
@@ -168,7 +168,7 @@ function App() {
         </div>
         <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
           {['전체', ...CATEGORIES].map(cat => (
-            <button key={cat} onClick={() => setActiveTab(cat)} className={cn("w-full flex items-center justify-between px-5 py-3.5 rounded-xl text-sm font-bold transition-all text-left", activeTab === cat ? "bg-primary text-white shadow-md" : "text-[#484848] hover:bg-canvas")}>
+            <button key={cat} onClick={() => setActiveTab(cat)} className={cn("w-full flex items-center justify-between px-5 py-4 rounded-xl text-[15px] font-bold transition-all text-left", activeTab === cat ? "bg-primary text-white shadow-md" : "text-[#484848] hover:bg-canvas")}>
               <span className="flex items-center gap-3">{cat === '전체' ? <Filter size={18} /> : <div className="w-1.5 h-1.5 rounded-full bg-current" />}{cat}</span>
               {activeTab === cat && <ChevronRight size={16} />}
             </button>
@@ -176,7 +176,7 @@ function App() {
         </nav>
         <div className="p-6 border-t border-hairline bg-white shrink-0">
           <div className="flex items-center gap-3 p-4 bg-canvas rounded-2xl border border-hairline">
-            <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center font-black">A</div>
+            <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center font-black shadow-sm">A</div>
             <div><p className="text-xs font-black">MASTER</p><p className="text-[10px] text-[#717171] font-bold">Household Pro</p></div>
           </div>
         </div>
@@ -193,7 +193,7 @@ function App() {
             </div>
             <div className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
               {['전체', ...CATEGORIES].map(cat => (
-                <button key={cat} onClick={() => { setActiveTab(cat); setIsMobileMenuOpen(false); }} className={cn("w-full flex items-center gap-3 px-5 py-4 rounded-xl font-bold", activeTab === cat ? "bg-primary text-white" : "text-[#484848] hover:bg-canvas")}>
+                <button key={cat} onClick={() => { setActiveTab(cat); setIsMobileMenuOpen(false); }} className={cn("w-full flex items-center gap-3 px-5 py-4 rounded-xl font-bold", activeTab === cat ? "bg-primary text-white shadow-md" : "text-[#484848] hover:bg-canvas")}>
                   {cat === '전체' ? <Filter size={18} /> : <div className="w-1.5 h-1.5 rounded-full bg-current" />}{cat}
                 </button>
               ))}
@@ -214,7 +214,7 @@ function App() {
         </header>
 
         <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-10 pb-32">
-          {/* 대시보드 헤더: 비율 정상화 */}
+          {/* 대시보드 헤더 */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <div className="flex items-center gap-5">
               <div className="p-4 bg-primary text-white rounded-2xl shadow-lg shadow-primary/20 hidden sm:block">
@@ -235,7 +235,6 @@ function App() {
             </button>
           </div>
 
-          {/* 대시보드 카드: 비율 정상화 */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 bg-white border border-hairline rounded-airbnb p-8 lg:p-12 shadow-sm relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-primary/10 transition-colors duration-500" />
@@ -257,16 +256,16 @@ function App() {
             </div>
           </div>
 
-          {/* 테이블 영역: 텍스트 밸런스 조정 */}
+          {/* 테이블 영역: 텍스트 가독성 대폭 강화 */}
           <div className="bg-white border border-hairline rounded-airbnb shadow-sm overflow-hidden mb-10">
             <div className="px-8 py-6 border-b border-hairline bg-canvas/30">
               <h3 className="font-black text-lg text-[#222222] tracking-tight">지출 상세 내역 <span className="text-xs font-bold text-[#717171] ml-2">(결제일 임박순)</span></h3>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[900px]">
-                <thead className="bg-canvas text-[#717171] font-black text-[10px] uppercase tracking-widest border-b border-hairline">
+              <table className="w-full text-left border-collapse min-w-[1000px]">
+                <thead className="bg-canvas text-[#717171] font-black text-xs uppercase tracking-widest border-b border-hairline">
                   <tr>
-                    <th className="px-8 py-5 w-16 text-center">납부</th>
+                    <th className="px-8 py-5 w-20 text-center">납부</th>
                     <th className="px-8 py-5">지출 항목</th>
                     <th className="px-8 py-5">금액</th>
                     <th className="px-8 py-5">결제예정일</th>
@@ -281,47 +280,47 @@ function App() {
                     const days = Math.max(0, sub.billing_date - todayDate.getDate());
                     return (
                       <tr key={sub.id} className={cn("group transition-colors", isManualUnpaid ? "bg-red-50/50" : "hover:bg-canvas/50")}>
-                        <td className="px-8 py-6 text-center">
+                        <td className="px-8 py-7 text-center">
                           <button onClick={() => togglePaidStatus(sub)} className={cn("transition-all active:scale-90", sub.is_paid ? "text-green-600" : "text-hairline hover:text-[#717171]")}>
-                            {sub.is_paid ? <CheckCircle2 size={24} /> : <Circle size={24} />}
+                            {sub.is_paid ? <CheckCircle2 size={28} /> : <Circle size={28} />}
                           </button>
                         </td>
-                        <td className="px-8 py-6">
+                        <td className="px-8 py-7">
                           <div className="flex flex-col">
-                            <span className="font-black text-[15px] text-[#222222] flex items-center gap-2">
+                            <span className="font-black text-lg text-[#222222] flex items-center gap-2 tracking-tight">
                               {sub.service_name}
                               {sub.is_variable && <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-black uppercase shadow-sm">변동</span>}
                             </span>
-                            <span className="text-[11px] text-[#717171] font-bold mt-0.5">{sub.category}</span>
+                            <span className="text-xs text-[#717171] font-bold mt-1">{sub.category}</span>
                           </div>
                         </td>
-                        <td className="px-8 py-6 font-black text-base text-[#222222] tabular-nums">₩{Math.round(sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount).toLocaleString()}</td>
-                        <td className="px-8 py-6 font-black text-[#222222]">
-                          <span className="text-sm">{sub.billing_cycle === 'yearly' ? `${sub.billing_month}월 ${sub.billing_date}일` : `매월 ${sub.billing_date}일`}</span>
-                          <div className={cn("text-[10px] font-black mt-1 px-2 py-0.5 rounded-full w-fit", days <= 3 ? "bg-primary text-white" : "bg-canvas text-[#717171] border border-hairline")}>D-{days === 0 ? 'Day' : days}</div>
+                        <td className="px-8 py-7 font-black text-lg text-[#222222] tabular-nums tracking-tight">₩{Math.round(sub.currency === 'USD' ? sub.amount * exchangeRate : sub.amount).toLocaleString()}</td>
+                        <td className="px-8 py-7 font-black text-[#222222]">
+                          <span className="text-base">{sub.billing_cycle === 'yearly' ? `${sub.billing_month}월 ${sub.billing_date}일` : `매월 ${sub.billing_date}일`}</span>
+                          <div className={cn("text-[10px] font-black mt-1.5 px-2 py-0.5 rounded-full w-fit shadow-sm", days <= 3 ? "bg-primary text-white" : "bg-canvas text-[#717171] border border-hairline")}>D-{days === 0 ? 'Day' : days}</div>
                         </td>
-                        <td className="px-8 py-6">
-                          <div className="flex flex-col gap-1.5">
-                            <span className="text-xs font-bold text-[#484848]">{sub.payment_method}</span>
-                            <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded w-fit border", sub.payment_type === 'auto' ? "bg-white text-[#717171] border-hairline" : "bg-primary text-white border-primary-dark")}>
+                        <td className="px-8 py-7">
+                          <div className="flex flex-col gap-2">
+                            <span className="text-sm font-bold text-[#484848] tracking-tight">{sub.payment_method}</span>
+                            <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded w-fit border shadow-sm", sub.payment_type === 'auto' ? "bg-white text-[#717171] border-hairline" : "bg-primary text-white border-primary-dark")}>
                               {sub.payment_type === 'auto' ? '자동이체' : '직접납부'}
                             </span>
                           </div>
                         </td>
-                        <td className="px-8 py-6">
-                          <span className="text-[11px] text-[#484848] font-medium line-clamp-2 max-w-[200px] leading-relaxed italic">{sub.memo || '-'}</span>
+                        <td className="px-8 py-7">
+                          <span className="text-[13px] text-[#484848] font-medium line-clamp-2 max-w-[250px] leading-relaxed italic">{sub.memo || '-'}</span>
                         </td>
-                        <td className="px-8 py-6 text-right">
+                        <td className="px-8 py-7 text-right">
                           <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                            <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setIsModalOpen(true); }} className="p-2.5 bg-white border border-hairline rounded-xl hover:shadow-md transition-all text-[#484848]"><Edit2 size={16} /></button>
-                            <button onClick={async () => { if(window.confirm('정말 삭제할까요?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-red-50 text-red-600 transition-all"><Trash2 size={16} /></button>
+                            <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setIsModalOpen(true); }} className="p-2.5 bg-white border border-hairline rounded-xl hover:shadow-md transition-all text-[#484848]"><Edit2 size={18} /></button>
+                            <button onClick={async () => { if(window.confirm('정말 삭제할까요?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-red-50 text-red-600 transition-all shadow-sm"><Trash2 size={18} /></button>
                             <div className="relative">
-                              <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-primary hover:text-white transition-all"><CalendarIcon size={16} /></button>
+                              <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"><CalendarIcon size={18} /></button>
                               {calendarMenuId === sub.id && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white border border-hairline rounded-2xl shadow-airbnb z-[100] overflow-hidden text-left animate-in fade-in zoom-in-95">
-                                  <a href={getNaverCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-5 py-3 text-xs font-black text-green-600 hover:bg-green-50 border-b border-hairline">네이버 일정</a>
-                                  <a href={getGoogleCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-5 py-3 text-xs font-black text-blue-600 hover:bg-blue-50 border-b border-hairline">구글 일정</a>
-                                  <button onClick={() => { downloadICS(sub); setCalendarMenuId(null); }} className="w-full text-left px-5 py-3 text-xs font-black text-[#222222] hover:bg-canvas">ICS 내보내기</button>
+                                <div className="absolute right-0 mt-2 w-56 bg-white border border-hairline rounded-2xl shadow-airbnb z-[100] overflow-hidden text-left animate-in fade-in zoom-in-95">
+                                  <a href={getNaverCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-6 py-4 text-sm font-black text-green-600 hover:bg-green-50 border-b border-hairline transition-colors">네이버 일정</a>
+                                  <a href={getGoogleCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-6 py-4 text-sm font-black text-blue-600 hover:bg-blue-50 border-b border-hairline transition-colors">구글 일정</a>
+                                  <button onClick={() => { downloadICS(sub); setCalendarMenuId(null); }} className="w-full text-left px-6 py-4 text-sm font-black text-[#222222] hover:bg-canvas transition-colors">ICS 내보내기</button>
                                 </div>
                               )}
                             </div>
@@ -336,7 +335,7 @@ function App() {
           </div>
         </div>
 
-        {/* 모달 창: 비율 정상화 */}
+        {/* 모달 창 */}
         {isModalOpen && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-md p-0 sm:p-6 animate-in fade-in duration-300">
             <div className="bg-white rounded-t-airbnb-sm sm:rounded-airbnb shadow-airbnb w-full max-w-lg flex flex-col h-[90vh] sm:h-auto mt-auto sm:mt-0 overflow-hidden animate-in slide-in-from-bottom sm:zoom-in-95">
@@ -348,11 +347,11 @@ function App() {
                 <div className="grid grid-cols-2 gap-5">
                   <div className="col-span-2">
                     <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">지출 명칭</label>
-                    <input required name="service_name" defaultValue={editingSub?.service_name} type="text" placeholder="예: 아파트 관리비" className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 text-base font-black outline-none focus:bg-white focus:border-primary transition-all" />
+                    <input required name="service_name" defaultValue={editingSub?.service_name} type="text" placeholder="예: 아파트 관리비" className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 text-base font-black outline-none focus:bg-white focus:border-primary transition-all shadow-inner" />
                   </div>
                   <div>
                     <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">금액</label>
-                    <input required name="amount" defaultValue={editingSub?.amount} type="number" step="0.01" className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 text-base font-black outline-none focus:bg-white focus:border-primary" />
+                    <input required name="amount" defaultValue={editingSub?.amount} type="number" step="0.01" className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 text-base font-black outline-none focus:bg-white focus:border-primary shadow-inner" />
                     <label className="flex items-center gap-2 mt-2.5 cursor-pointer">
                       <input type="checkbox" name="is_variable" defaultChecked={editingSub?.is_variable} className="w-4 h-4 rounded text-primary" />
                       <span className="text-[11px] font-bold text-[#717171]">금액 변동비</span>
@@ -360,7 +359,7 @@ function App() {
                   </div>
                   <div>
                     <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">통화</label>
-                    <select name="currency" defaultValue={editingSub?.currency || 'KRW'} className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 font-black text-sm outline-none bg-white"><option value="KRW">KRW (₩)</option><option value="USD">USD ($)</option></select>
+                    <select name="currency" defaultValue={editingSub?.currency || 'KRW'} className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 font-black text-sm outline-none bg-white shadow-inner"><option value="KRW">KRW (₩)</option><option value="USD">USD ($)</option></select>
                   </div>
                   
                   <div className="col-span-2 border-t border-hairline pt-4">
@@ -370,10 +369,10 @@ function App() {
                       <button type="button" onClick={() => setModalBillingCycle('yearly')} className={cn("py-2.5 rounded-xl border-2 font-black text-sm transition-all", modalBillingCycle === 'yearly' ? "border-primary bg-primary/5 text-primary" : "border-hairline text-[#717171]")}>매년</button>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <label className={cn("flex flex-col p-4 rounded-2xl border-2 transition-all cursor-pointer", (editingSub?.payment_type === 'auto' || !editingSub) ? "border-primary bg-primary/5" : "border-hairline hover:border-gray-300")}>
+                      <label className={cn("flex flex-col p-4 rounded-2xl border-2 transition-all cursor-pointer", (editingSub?.payment_type === 'auto' || !editingSub) ? "border-primary bg-primary/5 shadow-sm" : "border-hairline hover:border-gray-300")}>
                         <div className="flex items-center gap-2 font-black text-xs"><input type="radio" name="payment_type" value="auto" defaultChecked={editingSub?.payment_type === 'auto' || !editingSub} className="text-primary" /> 자동 납부</div>
                       </label>
-                      <label className={cn("flex flex-col p-4 rounded-2xl border-2 transition-all cursor-pointer", editingSub?.payment_type === 'manual' ? "border-red-500 bg-red-50" : "border-hairline hover:border-gray-300")}>
+                      <label className={cn("flex flex-col p-4 rounded-2xl border-2 transition-all cursor-pointer", editingSub?.payment_type === 'manual' ? "border-red-500 bg-red-50 shadow-sm" : "border-hairline hover:border-gray-300")}>
                         <div className="flex items-center gap-2 font-black text-xs"><input type="radio" name="payment_type" value="manual" defaultChecked={editingSub?.payment_type === 'manual'} className="text-red-500" /> 직접 납부</div>
                       </label>
                     </div>
@@ -383,24 +382,24 @@ function App() {
                     {modalBillingCycle === 'yearly' && (
                       <div className="animate-in fade-in slide-in-from-top-1">
                         <label className="block text-[10px] font-black text-[#717171] mb-2">결제 월</label>
-                        <select name="billing_month" defaultValue={editingSub?.billing_month || 1} className="w-full bg-canvas border border-hairline rounded-xl px-4 py-2.5 font-black bg-white">{Array.from({length: 12}, (_, i) => i + 1).map(m => <option key={m} value={m}>{m}월</option>)}</select>
+                        <select name="billing_month" defaultValue={editingSub?.billing_month || 1} className="w-full bg-canvas border border-hairline rounded-xl px-4 py-2.5 font-black bg-white shadow-inner">{Array.from({length: 12}, (_, i) => i + 1).map(m => <option key={m} value={m}>{m}월</option>)}</select>
                       </div>
                     )}
                     <div className={modalBillingCycle === 'monthly' ? 'col-span-2' : ''}>
                       <label className="block text-[10px] font-black text-[#717171] mb-2">결제 일</label>
-                      <select name="billing_date" defaultValue={editingSub?.billing_date || 1} className="w-full bg-canvas border border-hairline rounded-xl px-4 py-2.5 font-black bg-white">{Array.from({length: 31}, (_, i) => i + 1).map(d => <option key={d} value={d}>{d}일</option>)}</select>
+                      <select name="billing_date" defaultValue={editingSub?.billing_date || 1} className="w-full bg-canvas border border-hairline rounded-xl px-4 py-2.5 font-black bg-white shadow-inner">{Array.from({length: 31}, (_, i) => i + 1).map(d => <option key={d} value={d}>{d}일</option>)}</select>
                     </div>
                   </div>
 
                   <div className="col-span-2">
                     <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">메모</label>
-                    <textarea name="memo" defaultValue={editingSub?.memo || ''} rows={3} placeholder="추가 정보를 입력하세요..." className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 text-xs font-medium outline-none focus:bg-white focus:border-primary transition-all resize-none shadow-inner leading-relaxed" />
+                    <textarea name="memo" defaultValue={editingSub?.memo || ''} rows={3} placeholder="추가 정보를 입력하세요..." className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 text-sm font-medium outline-none focus:bg-white focus:border-primary transition-all resize-none shadow-inner leading-relaxed" />
                   </div>
                 </div>
 
                 <div className="fixed sm:static bottom-0 left-0 right-0 p-8 sm:p-0 bg-white sm:bg-transparent border-t border-hairline sm:border-none flex flex-col sm:flex-row gap-3 mt-6">
                   <button type="button" onClick={() => { setIsModalOpen(false); setEditingSub(null); }} className="order-2 sm:order-1 flex-1 py-3.5 font-black text-[#717171] hover:bg-canvas rounded-xl transition-all text-sm">취소</button>
-                  <button type="submit" disabled={isSubmitting} className="order-1 sm:order-2 flex-[2] bg-primary text-white py-3.5 rounded-xl font-black text-base hover:bg-primary-dark shadow-md flex items-center justify-center gap-2 active:scale-95 transition-all">
+                  <button type="submit" disabled={isSubmitting} className="order-1 sm:order-2 flex-[2] bg-primary text-white py-3.5 rounded-xl font-black text-base hover:bg-primary-dark shadow-md flex items-center justify-center gap-2 active:scale-95 transition-all shadow-primary/20">
                     {isSubmitting && <Loader2 className="animate-spin" size={18} />}
                     {editingSub ? '수정 완료' : '지출 등록'}
                   </button>
