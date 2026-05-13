@@ -502,9 +502,22 @@ function App() {
                     </div>
                   </div>
 
+                  <div className="col-span-2 grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">카테고리</label>
+                      <select name="category" defaultValue={editingSub?.category || '디지털 구독'} className="w-full bg-canvas border border-hairline rounded-xl px-4 py-2.5 font-black bg-white shadow-inner">
+                        {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">결제 수단 명칭</label>
+                      <input required name="payment_method" defaultValue={editingSub?.payment_method} type="text" placeholder="예: 신한카드 1234" className="w-full bg-canvas border border-hairline rounded-xl px-4 py-2.5 text-sm font-black outline-none focus:bg-white focus:border-primary shadow-inner" />
+                    </div>
+                  </div>
+
                   <div className="col-span-2">
                     <label className="block text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">메모</label>
-                    <textarea name="memo" defaultValue={editingSub?.memo || ''} rows={3} placeholder="추가 정보를 입력하세요..." className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 text-sm font-medium outline-none focus:bg-white focus:border-primary transition-all resize-none shadow-inner leading-relaxed" />
+                    <textarea name="memo" defaultValue={editingSub?.memo || ''} rows={2} placeholder="추가 정보를 입력하세요..." className="w-full bg-canvas border border-hairline rounded-xl px-4 py-3 text-sm font-medium outline-none focus:bg-white focus:border-primary transition-all resize-none shadow-inner leading-relaxed" />
                   </div>
                 </div>
 
