@@ -140,19 +140,20 @@ function App() {
     }
   };
 
-  // 정밀한 12개월 지출 데이터 계산 (시작/종료일 반영)
+  // 정밀한 12개월 지출 데이터 계산 (문자열 비교 방식으로 더 정확하게 수정)
   const monthlyExpenditureData = useMemo(() => {
+    const year = todayDate.getFullYear();
     return Array.from({ length: 12 }, (_, i) => {
-      const targetMonthNum = i + 1;
-      const year = todayDate.getFullYear();
-      const firstDay = new Date(year, i, 1);
-      const lastDay = new Date(year, i + 1, 0);
+      const monthNum = i + 1;
+      const targetMonthStart = `${year}-${String(monthNum).padStart(2, '0')}-01`;
+      const targetMonthEnd = `${year}-${String(monthNum).padStart(2, '0')}-${new Date(year, monthNum, 0).getDate()}`;
 
       return subscriptions.reduce((sum, sub) => {
-        // 시작/종료일 체크
-        const start = sub.started_at ? new Date(sub.started_at) : null;
-        const end = sub.ended_at ? new Date(sub.ended_at) : null;
-        const isActive = (!start || start <= lastDay) && (!end || end >= firstDay);
+        // 시작/종료일 체크 (문자열 YYYY-MM-DD 비교는 안전하고 확실함)
+        const start = sub.started_at || '1900-01-01';
+        const end = sub.ended_at || '2999-12-31';
+        
+        const isActive = start <= targetMonthEnd && end >= targetMonthStart;
         
         if (!isActive) return sum;
 
@@ -160,7 +161,7 @@ function App() {
         if (sub.billing_cycle === 'monthly') return sum + amountKRW;
         if (sub.billing_cycle === 'yearly') {
           if (sub.annual_type === 'split') return sum + (amountKRW / 12);
-          if (sub.billing_month === targetMonthNum) return sum + amountKRW;
+          if (sub.billing_month === monthNum) return sum + amountKRW;
         }
         return sum;
       }, 0);
@@ -330,6 +331,7 @@ function App() {
               </div>
               <div className="h-64 w-full">
                 <Bar 
+                  key={`chart-${monthlyExpenditureData.join('-')}`}
                   data={barChartData} 
                   options={{ 
                     responsive: true, 
