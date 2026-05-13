@@ -136,7 +136,6 @@ function App() {
     // 남은 일수 계산 함수
     const getDaysUntil = (sub: Subscription) => {
       const currentDay = todayDate.getDate();
-      const currentMonth = todayDate.getMonth() + 1;
       
       if (sub.billing_cycle === 'monthly') {
         let diff = sub.billing_date - currentDay;
