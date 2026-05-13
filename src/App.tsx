@@ -1,4 +1,4 @@
-// Layout Update: Move Memo to its own column next to Payment Method
+// UI Update: Add Icon and Date info to Dashboard Header
 import { useState, useEffect, useMemo } from 'react';
 import { 
   LayoutDashboard, 
@@ -7,12 +7,14 @@ import {
   Loader2,
   Trash2,
   Edit2,
-  Calendar,
+  Calendar as CalendarIcon,
   Menu,
   CheckCircle2,
   Circle,
   ChevronRight,
-  Filter
+  Filter,
+  BarChart3,
+  Clock
 } from 'lucide-react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
@@ -42,6 +44,16 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [calendarMenuId, setCalendarMenuId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('전체');
+
+  // 현재 날짜 포맷팅
+  const today = useMemo(() => {
+    return new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long'
+    }).format(new Date());
+  }, []);
 
   useEffect(() => {
     fetch('https://open.er-api.com/v6/latest/USD')
@@ -191,16 +203,31 @@ function App() {
         </header>
 
         <div className="flex-1 overflow-y-auto p-6 lg:p-10 space-y-10 pb-32">
+          {/* 대시보드 헤더 영역 업데이트 */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-            <div>
-              <h2 className="text-3xl lg:text-4xl font-black tracking-tight text-ink">통합 고정비 대시보드</h2>
-              <p className="text-ink-muted font-medium mt-1">총 {filteredSubs.length}개의 고정비 항목이 관리 중입니다.</p>
+            <div className="flex items-center gap-5">
+              <div className="p-4 bg-primary text-white rounded-[24px] shadow-lg shadow-primary/20 hidden sm:block">
+                <BarChart3 size={32} />
+              </div>
+              <div>
+                <div className="flex items-center gap-3">
+                  <BarChart3 size={24} className="text-primary sm:hidden" />
+                  <h2 className="text-3xl lg:text-4xl font-black tracking-tight text-ink uppercase">통합 고정비 대시보드</h2>
+                </div>
+                <div className="flex items-center gap-2 text-ink-muted font-bold mt-1.5">
+                  <Clock size={14} className="text-primary" />
+                  <span className="text-sm">{today}</span>
+                  <span className="mx-2 text-hairline">|</span>
+                  <p className="text-sm">총 {filteredSubs.length}개 관리 중</p>
+                </div>
+              </div>
             </div>
-            <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setIsModalOpen(true); }} className="shrink-0 bg-primary text-white px-8 py-4 rounded-2xl font-black text-lg shadow-lg hover:bg-primary-dark transition-all active:scale-95 shadow-primary/20">
+            <button onClick={() => { setEditingSub(null); setModalBillingCycle('monthly'); setIsModalOpen(true); }} className="w-full sm:w-auto shrink-0 bg-primary text-white px-8 py-4 rounded-2xl font-black text-lg shadow-lg hover:bg-primary-dark transition-all active:scale-95 shadow-primary/20">
               + 지출 항목 추가
             </button>
           </div>
 
+          {/* 이하 카드 및 테이블 섹션은 동일 유지 */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 bg-white border border-hairline rounded-airbnb p-8 lg:p-12 shadow-sm relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-primary/10 transition-colors duration-500" />
@@ -272,7 +299,6 @@ function App() {
                             </span>
                           </div>
                         </td>
-                        {/* 메모 컬럼 추가 */}
                         <td className="px-8 py-7">
                           <span className="text-xs text-ink font-medium line-clamp-2 max-w-[200px]">{sub.memo || '-'}</span>
                         </td>
@@ -281,7 +307,7 @@ function App() {
                             <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setIsModalOpen(true); }} className="p-2.5 bg-white border border-hairline rounded-xl hover:shadow-md transition-all"><Edit2 size={18} /></button>
                             <button onClick={async () => { if(window.confirm('정말 삭제할까요?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-red-50 text-red-600 transition-all"><Trash2 size={18} /></button>
                             <div className="relative">
-                              <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"><Calendar size={18} /></button>
+                              <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2.5 bg-white border border-hairline rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"><CalendarIcon size={18} /></button>
                               {calendarMenuId === sub.id && (
                                 <div className="absolute right-0 mt-2 w-48 bg-white border border-hairline rounded-2xl shadow-airbnb z-[100] overflow-hidden text-left animate-in fade-in zoom-in-95">
                                   <a href={getNaverCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-5 py-3.5 text-xs font-black text-green-600 hover:bg-green-50 border-b border-hairline transition-colors">네이버 등록</a>
