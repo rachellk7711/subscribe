@@ -402,7 +402,16 @@ function App() {
                             <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                               <button onClick={() => { setEditingSub(sub); setModalBillingCycle(sub.billing_cycle); setHasEndDate(!!sub.ended_at); setIsModalOpen(true); }} className="p-2 hover:bg-white rounded-full transition-all text-[#717171] hover:text-[#222222] hover:shadow-sm border border-transparent hover:border-[#ebebeb]"><Edit2 size={16} /></button>
                               <button onClick={async () => { if(window.confirm('삭제하시겠습니까?')) { await supabase.from('subscriptions').delete().eq('id', sub.id); fetchSubscriptions(); } }} className="p-2 hover:bg-white rounded-full transition-all text-[#717171] hover:text-primary hover:shadow-sm border border-transparent hover:border-[#ebebeb]"><Trash2 size={16} /></button>
-                              <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2 hover:bg-white rounded-full transition-all text-[#717171] hover:text-primary hover:shadow-sm border border-transparent hover:border-[#ebebeb]"><CalendarIcon size={16} /></button>
+                              <div className="relative">
+                                <button onClick={() => setCalendarMenuId(calendarMenuId === sub.id ? null : sub.id)} className="p-2 hover:bg-white rounded-full transition-all text-[#717171] hover:text-primary hover:shadow-sm border border-transparent hover:border-[#ebebeb]"><CalendarIcon size={16} /></button>
+                                {calendarMenuId === sub.id && (
+                                  <div className="absolute right-0 mt-2 w-56 bg-white border border-[#ebebeb] rounded-xl shadow-[0_6px_16px_rgba(0,0,0,0.12)] z-[100] overflow-hidden text-left animate-in fade-in zoom-in-95">
+                                    <a href={getNaverCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-5 py-3 text-sm font-semibold text-[#03c75a] hover:bg-[#f7f7f7] border-b border-[#ebebeb] transition-colors">네이버 캘린더 등록</a>
+                                    <a href={getGoogleCalendarLink(sub)} target="_blank" rel="noreferrer" className="block px-5 py-3 text-sm font-semibold text-[#4285f4] hover:bg-[#f7f7f7] border-b border-[#ebebeb] transition-colors">구글 캘린더 등록</a>
+                                    <button onClick={() => { downloadICS(sub); setCalendarMenuId(null); }} className="w-full text-left px-5 py-3 text-sm font-semibold text-[#222222] hover:bg-[#f7f7f7] transition-colors">ICS 파일 내보내기</button>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </td>
                         </tr>
