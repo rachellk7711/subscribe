@@ -285,32 +285,36 @@ function App() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* 총 지출액 카드 */}
-            <div className="lg:col-span-12 bg-white border border-hairline rounded-airbnb p-10 lg:p-12 shadow-sm relative overflow-hidden group flex flex-col lg:flex-row justify-between items-center">
-              <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
-              <div className="z-10 flex flex-col items-center lg:items-start mb-8 lg:mb-0">
-                <p className="text-[11px] font-black text-[#717171] uppercase tracking-widest mb-4">Total Monthly Expenditure</p>
-                <div className="flex items-baseline gap-4">
-                  <span className="text-6xl lg:text-8xl font-black tabular-nums tracking-tighter text-[#222222]">₩{Math.round(currentMonthTotal).toLocaleString()}</span>
-                  <span className="text-2xl lg:text-3xl text-[#717171] font-bold">/ MO</span>
+            {/* 총 지출액 카드: 컴팩트 레이아웃 (숫자 크기 축소 및 여백 압축) */}
+            <div className="lg:col-span-12 bg-white border border-hairline rounded-airbnb p-6 lg:p-8 shadow-sm relative overflow-hidden group flex flex-col lg:flex-row justify-between items-center">
+              <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full -mr-24 -mt-24 blur-3xl pointer-events-none" />
+              
+              {/* 좌측: 총 금액 영역 (크기 축소) */}
+              <div className="z-10 flex flex-col items-center lg:items-start mb-6 lg:mb-0">
+                <p className="text-[10px] font-black text-[#717171] uppercase tracking-widest mb-2">Total Monthly Expenditure</p>
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl lg:text-5xl font-black tabular-nums tracking-tighter text-[#222222]">₩{Math.round(currentMonthTotal).toLocaleString()}</span>
+                  <span className="text-lg lg:text-xl text-[#717171] font-bold">/ MO</span>
                 </div>
               </div>
-              <div className="z-10 flex flex-col gap-4 w-full lg:w-[320px]">
-                <div className="flex items-center gap-3 px-6 py-4 bg-canvas border border-hairline rounded-2xl">
-                  {diff > 0 ? <TrendingUp className="text-primary" size={20} /> : (diff < 0 ? <TrendingDown className="text-green-600" size={20} /> : <Minus className="text-[#717171]" size={20} />)}
-                  <span className={cn("text-base font-black", diff > 0 ? "text-primary" : (diff < 0 ? "text-green-600" : "text-[#717171]"))}>
+
+              {/* 우측: 세로 정렬된 지표 박스들 (간격 압축) */}
+              <div className="z-10 flex flex-col gap-2 w-full lg:w-[280px]">
+                <div className="flex items-center gap-3 px-4 py-2 bg-canvas border border-hairline rounded-xl">
+                  {diff > 0 ? <TrendingUp className="text-primary" size={16} /> : (diff < 0 ? <TrendingDown className="text-green-600" size={16} /> : <Minus className="text-[#717171]" size={16} />)}
+                  <span className={cn("text-xs font-black", diff > 0 ? "text-primary" : (diff < 0 ? "text-green-600" : "text-[#717171]"))}>
                     전월 대비 {Math.abs(diffPercent)}% {diff > 0 ? '증가' : (diff < 0 ? '감소' : '동일')}
                   </span>
                 </div>
-                <div className="flex items-center gap-4 px-6 py-4 bg-primary/5 border border-primary/10 rounded-2xl">
-                  <div className="flex-1 h-2 bg-hairline rounded-full overflow-hidden">
+                <div className="flex items-center gap-3 px-4 py-2 bg-primary/5 border border-primary/10 rounded-xl">
+                  <div className="flex-1 h-1.5 bg-hairline rounded-full overflow-hidden">
                     <div className="h-full bg-primary" style={{ width: `${Math.round((subscriptions.filter(s => s.is_paid).length / (subscriptions.length || 1)) * 100)}%` }} />
                   </div>
-                  <span className="text-sm font-black text-primary uppercase tracking-tight">납부 {Math.round((subscriptions.filter(s => s.is_paid).length / (subscriptions.length || 1)) * 100)}%</span>
+                  <span className="text-[10px] font-black text-primary uppercase tracking-tight">납부 {Math.round((subscriptions.filter(s => s.is_paid).length / (subscriptions.length || 1)) * 100)}%</span>
                 </div>
-                <div className="flex items-center justify-between px-6 py-3.5 bg-canvas border border-hairline rounded-2xl">
-                  <span className="text-[11px] font-black text-[#717171] uppercase tracking-wider">USD Exchange Rate</span>
-                  <span className="text-sm font-black text-[#222222]">₩{Math.round(exchangeRate).toLocaleString()}</span>
+                <div className="flex items-center justify-between px-4 py-2 bg-canvas border border-hairline rounded-xl">
+                  <span className="text-[9px] font-black text-[#717171] uppercase tracking-wider">USD Exchange</span>
+                  <span className="text-xs font-black text-[#222222]">₩{Math.round(exchangeRate).toLocaleString()}</span>
                 </div>
               </div>
             </div>
