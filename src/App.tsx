@@ -437,16 +437,97 @@ function App() {
                     <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">지출 명칭</label>
                     <input required name="service_name" defaultValue={editingSub?.service_name} type="text" className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 text-base font-medium outline-none focus:border-[#222222] transition-all" />
                   </div>
+
+                  <div className="col-span-2 flex items-center gap-3 bg-[#f7f7f7] p-3 rounded-lg border border-[#ebebeb]">
+                    <input type="checkbox" id="is_variable" name="is_variable" defaultChecked={editingSub?.is_variable} className="w-5 h-5 accent-primary rounded cursor-pointer" />
+                    <label htmlFor="is_variable" className="text-sm font-bold text-[#222222] cursor-pointer">금액이 매번 변동되는 항목입니다</label>
+                  </div>
+
                   <div>
                     <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">금액</label>
-                    <input required name="amount" defaultValue={editingSub?.amount} type="number" className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 text-base font-bold outline-none focus:border-[#222222]" />
+                    <input required name="amount" defaultValue={editingSub?.amount} type="number" step="0.01" className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 text-base font-bold outline-none focus:border-[#222222]" />
                   </div>
                   <div>
                     <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">통화</label>
-                    <select name="currency" defaultValue={editingSub?.currency || 'KRW'} className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 font-bold text-sm outline-none"><option value="KRW">KRW (₩)</option><option value="USD">USD ($)</option></select>
+                    <select name="currency" defaultValue={editingSub?.currency || 'KRW'} className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 font-bold text-sm outline-none focus:border-[#222222]"><option value="KRW">KRW (₩)</option><option value="USD">USD ($)</option></select>
+                  </div>
+
+                  <div className="col-span-2 grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">납부 주기</label>
+                      <div className="flex rounded-lg border border-[#dddddd] overflow-hidden">
+                        <button type="button" onClick={() => setModalBillingCycle('monthly')} className={cn("flex-1 py-2 text-sm font-bold transition-all", modalBillingCycle === 'monthly' ? "bg-primary text-white" : "bg-white text-[#717171] hover:bg-[#f7f7f7]")}>매월</button>
+                        <button type="button" onClick={() => setModalBillingCycle('yearly')} className={cn("flex-1 py-2 text-sm font-bold transition-all", modalBillingCycle === 'yearly' ? "bg-primary text-white" : "bg-white text-[#717171] hover:bg-[#f7f7f7]")}>매년</button>
+                      </div>
+                    </div>
+                    {modalBillingCycle === 'yearly' && (
+                      <div className="col-span-2">
+                        <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">연간 비용 처리 방식</label>
+                        <select name="annual_type" defaultValue={editingSub?.annual_type || 'single'} className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 text-sm font-bold outline-none focus:border-[#222222]">
+                          <option value="single">결제월에 일시불로 계산</option>
+                          <option value="split">12개월로 나누어 계산</option>
+                        </select>
+                      </div>
+                    )}
+                    <div className="flex gap-2 col-span-2">
+                      {modalBillingCycle === 'yearly' && (
+                        <div className="flex-1">
+                          <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">결제 월</label>
+                          <select required name="billing_month" defaultValue={editingSub?.billing_month || currentMonthNum} className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 text-sm font-bold outline-none focus:border-[#222222]">
+                            {Array.from({length: 12}, (_, i) => (<option key={i+1} value={i+1}>{i+1}월</option>))}
+                          </select>
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">결제 일</label>
+                        <input required name="billing_date" defaultValue={editingSub?.billing_date} type="number" min="1" max="31" className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 text-sm font-bold outline-none focus:border-[#222222]" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-span-2 grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">결제 방식</label>
+                      <select name="payment_type" defaultValue={editingSub?.payment_type || 'auto'} className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 text-sm font-bold outline-none focus:border-[#222222]">
+                        <option value="auto">자동 이체</option>
+                        <option value="manual">직접 납부</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">결제 수단</label>
+                      <input required name="payment_method" defaultValue={editingSub?.payment_method} type="text" placeholder="ex) 신한카드, 네이버페이" className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 text-sm font-medium outline-none focus:border-[#222222]" />
+                    </div>
+                  </div>
+
+                  <div className="col-span-2 grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">카테고리</label>
+                      <select required name="category" defaultValue={editingSub?.category || CATEGORIES[0]} className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 text-sm font-bold outline-none focus:border-[#222222]">
+                        {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="col-span-2 grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">시작일</label>
+                      <input type="date" name="started_at" defaultValue={editingSub?.started_at || todayDate.toISOString().split('T')[0]} className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 text-sm font-bold outline-none focus:border-[#222222]" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <input type="checkbox" id="has_end_date" checked={hasEndDate} onChange={(e) => setHasEndDate(e.target.checked)} className="accent-primary cursor-pointer" />
+                        <label htmlFor="has_end_date" className="text-[10px] font-bold text-[#717171] uppercase cursor-pointer">종료일 설정</label>
+                      </div>
+                      <input type="date" name="ended_at" defaultValue={editingSub?.ended_at || ''} disabled={!hasEndDate} className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 text-sm font-bold outline-none focus:border-[#222222] disabled:opacity-50 disabled:bg-[#f7f7f7]" />
+                    </div>
+                  </div>
+
+                  <div className="col-span-2">
+                    <label className="block text-[10px] font-bold text-[#717171] uppercase mb-2">메모 (선택)</label>
+                    <textarea name="memo" defaultValue={editingSub?.memo || ''} rows={2} className="w-full bg-white border border-[#dddddd] rounded-lg px-4 py-3 text-sm font-medium outline-none focus:border-[#222222] resize-none" />
                   </div>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-[#ebebeb] mt-6">
                   <button type="button" onClick={() => { setIsModalOpen(false); setEditingSub(null); }} className="flex-1 py-3.5 font-bold text-[#717171] hover:bg-[#f7f7f7] rounded-lg transition-all text-sm">취소</button>
                   <button type="submit" disabled={isSubmitting} className="flex-[2] bg-primary text-white py-3.5 rounded-lg font-bold text-base hover:bg-[#e00b41] shadow-md flex items-center justify-center gap-2">
                     {isSubmitting && <Loader2 className="animate-spin" size={18} />}
